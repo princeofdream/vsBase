@@ -1,0 +1,1 @@
+{"DeviceID0":144,"DeviceID1":0,"DeviceID2":0,"DeviceID3":2}
