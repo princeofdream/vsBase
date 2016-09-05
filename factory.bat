@@ -37,10 +37,17 @@ REM  goto END
 :WRITE_ID
 	ECHO "Writing your ID..."
 	adb shell "mkdir -p /protect_t/ /protect_s/"
+
+	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect1"
+	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect2"
+	
 	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_t/"
 	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
+	
 	adb shell "mkdir -p /protect_t/IBoxConfig/"
 	adb shell "mkdir -p /protect_s/IBoxConfig/"
+	adb shell "mount -o remount,rw /protect_t"
+	adb shell "mount -o remount,rw /protect_s"
 
 	adb push IBoxConfig\BroadcastConfig.txt /protect_s/IBoxConfig/
 	adb push IBoxConfig\DeviceIDConfig.txt  /protect_s/IBoxConfig/
