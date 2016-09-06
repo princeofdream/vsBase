@@ -46,18 +46,18 @@ REM  goto END
 	ECHO "================================================================="
 	ECHO "================================================================="
 	adb shell "mount -o remount,rw /"
-	adb shell "mkdir -p /protect_t/ /protect_s/"
+	adb shell "mkdir -p /protect_f/ /protect_s/"
 
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_t/"
+	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
 	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
 	
 	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect1"
 	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect2"
 	
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_t/"
+	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
 	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
 	
-	adb shell "mount -o remount,rw /protect_t"
+	adb shell "mount -o remount,rw /protect_f"
 	adb shell "mount -o remount,rw /protect_s"
 
 
@@ -66,8 +66,8 @@ REM  goto END
 	
 
 	
-	adb shell "rm -rf /protect_t/IBoxConfig/ /protect_s/IBoxConfig/ "
-	adb shell "mkdir -p /protect_t/IBoxConfig/"
+	adb shell "rm -rf /protect_f/IBoxConfig/ /protect_s/IBoxConfig/ "
+	adb shell "mkdir -p /protect_f/IBoxConfig/"
 	adb shell "mkdir -p /protect_s/IBoxConfig/"
 
 	adb push IBoxConfig\BroadcastConfig.txt /protect_s/IBoxConfig/ 2>null
@@ -78,16 +78,16 @@ REM  goto END
 	adb push IBoxConfig\RTSPConfig.txt /protect_s/IBoxConfig/ 2>null
 	adb push IBoxConfig\VideoRecordConfig.txt /protect_s/IBoxConfig/ 2>null
 
-	adb push IBoxConfig\BroadcastConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\OBDServerConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\SocketConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\CaptureConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\FolderConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\RTSPConfig.txt /protect_t/IBoxConfig/ 2>null
-	adb push IBoxConfig\VideoRecordConfig.txt /protect_t/IBoxConfig/ 2>null
+	adb push IBoxConfig\BroadcastConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\OBDServerConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\SocketConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\CaptureConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\FolderConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\RTSPConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push IBoxConfig\VideoRecordConfig.txt /protect_f/IBoxConfig/ 2>null
 
 	adb shell "echo %DeviceID% > /protect_s/IBoxDeviceID.config"
-	adb shell "echo %DeviceID% > /protect_t/IBoxDeviceID.config"
+	adb shell "echo %DeviceID% > /protect_f/IBoxDeviceID.config"
 	
 	adb shell sync
 
