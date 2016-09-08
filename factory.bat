@@ -45,27 +45,31 @@ REM  goto END
 	ECHO "Writing your ID..."
 	ECHO "================================================================="
 	ECHO "================================================================="
-	adb shell "mount -o remount,rw /"
-	adb shell "mkdir -p /protect_f/ /protect_s/"
 
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
-	
-	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect1"
-	adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect2"
-	
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
-	adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
-	
-	adb shell "mount -o remount,rw /protect_f"
-	adb shell "mount -o remount,rw /protect_s"
+REM      adb shell "mount -o remount,rw /"
+REM      adb shell "mkdir -p /protect_f/ /protect_s/"
+REM      adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
+REM      adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
 
 
-	adb shell "mount |grep protect_s" |find "protect"
+REM  REM  Mount Fail and do format!!!! May cause SIM Card Error!!!!
+REM      adb shell "mount |grep protect_s" |find "protect"
+REM      if %errorlevel%==1 goto MOUNT_FAIL_LOOP1
+
+
+REM  :REMOUNT
+REM      adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect1 /protect_f/"
+REM      adb shell "mount -t ext4 /dev/block/platform/mtk-msdc.0/by-name/protect2 /protect_s/"
+
+REM      adb shell "mount -o remount,rw /protect_f"
+REM      adb shell "mount -o remount,rw /protect_s"
+
+
+	adb shell "mount |grep protect" |find "protect"
 	if %errorlevel%==1 goto MOUNT_FAIL
-	
 
-	
+
+
 	adb shell "rm -rf /protect_f/IBoxConfig/ /protect_s/IBoxConfig/ "
 	adb shell "mkdir -p /protect_f/IBoxConfig/"
 	adb shell "mkdir -p /protect_s/IBoxConfig/"
@@ -113,7 +117,13 @@ REM  goto END
 	echo "Check device id Error!"
 	goto END
 
-	
+
+REM  :MOUNT_FAIL_LOOP1
+REM      echo "!!!!!!!!!!!!!!!!! FORMAT !!!!!!!!!!!!!!!!!!!!!"
+REM      adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect1"
+REM      adb shell "mke2fs /dev/block/platform/mtk-msdc.0/by-name/protect2"
+REM      goto REMOUNT
+
 :MOUNT_FAIL
 	ECHO "================================================================="
 	echo "Mount Fail !!!!!"
