@@ -44,10 +44,9 @@ extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
 
 
 //Output YUV420P   
-#define OUTPUT_YUV420P 0  
 //'1' Use Dshow   
 //'0' Use GDIgrab  
-#define USE_DSHOW 0  
+#define USE_DSHOW 1
 
 //Refresh Event  
 #define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)  
@@ -283,239 +282,6 @@ int OpenOutPut()
 	}
 
 	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
-	return 0;
-}
-
-int Start_Rec(int argc, _TCHAR* argv[])
-{
-	int ret;
-	av_register_all();
-	avdevice_register_all();
-	if (OpenVideoCapture() < 0)
-	{
-		return -1;
-	}
-	if (OpenAudioCapture() < 0)
-	{
-		return -1;
-	}
-	if (OpenOutPut() < 0)
-	{
-		return -1;
-	}
-	
-	InitializeCriticalSection(&VideoSection);
-	InitializeCriticalSection(&AudioSection);
-
-	AVFrame *picture = av_frame_alloc();
-	int size = avpicture_get_size(pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt, 
-		pFormatCtx_Out->streams[VideoIndex]->codec->width, pFormatCtx_Out->streams[VideoIndex]->codec->height);
-	picture_buf = new uint8_t[size];
-
-	avpicture_fill((AVPicture *)picture, picture_buf, 
-		pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt, 
-		pFormatCtx_Out->streams[VideoIndex]->codec->width, 
-		pFormatCtx_Out->streams[VideoIndex]->codec->height);
-
-
-
-	//star cap screen thread
-	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-	CreateThread( NULL, 0, ScreenCapThreadProc, 0, 0, NULL);
-	//star cap audio thread
-	CreateThread( NULL, 0, AudioCapThreadProc, 0, 0, NULL);
-	//CreateThread(NULL, 0, SetRecStat, 0, 0, NULL);
-	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-	int64_t cur_pts_v=0,cur_pts_a=0;
-	int VideoFrameIndex = 0, AudioFrameIndex = 0;
-
-#if 1
-	while(1)
-	{
-#if 0
-		if (_kbhit() != 0 && bCap)
-#else
-		if (RecStat && bCap)
-#endif
-		{
-			bCap = false;
-			RecStat = false;
-			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-			Sleep(2000);//简单的用sleep等待采集线程关闭
-		}
-		if (fifo_audio && fifo_video)
-		{
-			int sizeAudio = av_audio_fifo_size(fifo_audio);
-			int sizeVideo = av_fifo_size(fifo_video);
-			/* Cant not print here */
-			//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-			//缓存数据写完就结束循环
-			if (av_audio_fifo_size(fifo_audio) <= pFormatCtx_Out->streams[AudioIndex]->codec->frame_size && 
-				av_fifo_size(fifo_video) <= frame_size && !bCap)
-			{
-				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				break;
-			}
-		}
-
-		if(av_compare_ts(cur_pts_v, pFormatCtx_Out->streams[VideoIndex]->time_base, 
-			cur_pts_a,pFormatCtx_Out->streams[AudioIndex]->time_base) <= 0)
-		{
-//			printf("--James--[%s:%d]---avfifo size:%d, frame_size:%d.\n", __FILE__, __LINE__, av_fifo_size(fifo_video) , frame_size);
-			//read data from fifo
-			if (av_fifo_size(fifo_video) < frame_size && !bCap)
-			{
-				/*Can not print here*/
-				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				cur_pts_v = 0x7fffffffffffffff;
-			}
-			if(av_fifo_size(fifo_video) >= size)
-			{
-//				printf("--James--[%s:%d]---av_fifo_size(fifo_video):%d,%d\n", __FILE__, __LINE__,av_fifo_size(fifo_video),size);
-				EnterCriticalSection(&VideoSection);
-				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				//picture_buf = (uint8_t*)malloc(size);
-				//memset(picture_buf, 0x0, size);
-				av_fifo_generic_read(fifo_video, picture_buf, size, NULL);
-				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				LeaveCriticalSection(&VideoSection);
-				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				
-				avpicture_fill((AVPicture *)picture, picture_buf, 
-					pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt, 
-					pFormatCtx_Out->streams[VideoIndex]->codec->width, 
-					pFormatCtx_Out->streams[VideoIndex]->codec->height);
-				
-				//pts = n * (（1 / timbase）/ fps);
-				picture->pts = VideoFrameIndex * ((pFormatCtx_Video->streams[0]->time_base.den / pFormatCtx_Video->streams[0]->time_base.num) / 15);
-
-				int got_picture = 0;
-				AVPacket pkt;
-				av_init_packet(&pkt);
-				
-				pkt.data = NULL;
-				pkt.size = 0;
-				int ret = avcodec_encode_video2(pFormatCtx_Out->streams[VideoIndex]->codec, &pkt, picture, &got_picture);
-				if(ret < 0)
-				{
-					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-					//编码错误,不理会此帧
-					continue;
-				}
-				
-				if (got_picture==1)
-				{
-					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
- 					pkt.stream_index = VideoIndex;
-					pkt.pts = av_rescale_q_rnd(pkt.pts, pFormatCtx_Video->streams[0]->time_base, 
-						pFormatCtx_Out->streams[VideoIndex]->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));  
-					pkt.dts = av_rescale_q_rnd(pkt.dts,  pFormatCtx_Video->streams[0]->time_base, 
-						pFormatCtx_Out->streams[VideoIndex]->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));  
-
-					pkt.duration = ((pFormatCtx_Out->streams[0]->time_base.den / pFormatCtx_Out->streams[0]->time_base.num) / 15);
-
-					cur_pts_v = pkt.pts;
-
-					ret = av_interleaved_write_frame(pFormatCtx_Out, &pkt);
-					//delete[] pkt.data;
-					av_free_packet(&pkt);
-				}
-				//free(picture_buf);
-				VideoFrameIndex++;
-			}
-		}
-		else
-		{
-			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-			if (NULL == fifo_audio)
-			{
-				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				continue;//还未初始化fifo
-			}
-			if (av_audio_fifo_size(fifo_audio) < pFormatCtx_Out->streams[AudioIndex]->codec->frame_size && !bCap)
-			{
-				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-				cur_pts_a = 0x7fffffffffffffff;
-			}
-			if(av_audio_fifo_size(fifo_audio) >= 
-				(pFormatCtx_Out->streams[AudioIndex]->codec->frame_size > 0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024))
-			{
-				/* Can not print here*/
-				AVFrame *frame;
-				frame = av_frame_alloc();
-				frame->nb_samples = pFormatCtx_Out->streams[AudioIndex]->codec->frame_size>0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size: 1024;
-				frame->channel_layout = pFormatCtx_Out->streams[AudioIndex]->codec->channel_layout;
-				frame->format = pFormatCtx_Out->streams[AudioIndex]->codec->sample_fmt;
-				frame->sample_rate = pFormatCtx_Out->streams[AudioIndex]->codec->sample_rate;
-				av_frame_get_buffer(frame, 0);
-
-				EnterCriticalSection(&AudioSection);
-				av_audio_fifo_read(fifo_audio, (void **)frame->data, 
-					(pFormatCtx_Out->streams[AudioIndex]->codec->frame_size > 0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024));
-				LeaveCriticalSection(&AudioSection);
-
-				if (pFormatCtx_Out->streams[0]->codec->sample_fmt != pFormatCtx_Audio->streams[AudioIndex]->codec->sample_fmt 
-					|| pFormatCtx_Out->streams[0]->codec->channels != pFormatCtx_Audio->streams[AudioIndex]->codec->channels 
-					|| pFormatCtx_Out->streams[0]->codec->sample_rate != pFormatCtx_Audio->streams[AudioIndex]->codec->sample_rate)
-				{
-					//Must not add debug here
-					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-					//如果输入和输出的音频格式不一样 需要重采样，这里是一样的就没做
-				}
-
-				AVPacket pkt_out;
-				av_init_packet(&pkt_out);
-				int got_picture = -1;
-				pkt_out.data = NULL;
-				pkt_out.size = 0;
-
-				frame->pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
-				if (avcodec_encode_audio2(pFormatCtx_Out->streams[AudioIndex]->codec, &pkt_out, frame, &got_picture) < 0)
-				{
-					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-					printf("can not decoder a frame");
-				}
-				av_frame_free(&frame);
-				if (got_picture) 
-				{
-					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-					pkt_out.stream_index = AudioIndex;
-					pkt_out.pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
-					pkt_out.dts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
-					pkt_out.duration = pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
-
-					cur_pts_a = pkt_out.pts;
-					
-					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-					int ret = av_interleaved_write_frame(pFormatCtx_Out, &pkt_out);
-					av_free_packet(&pkt_out);
-				}
-				AudioFrameIndex++;
-			}
-		}
-	}
-	
-	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-	av_write_trailer(pFormatCtx_Out);
-	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-	avio_close(pFormatCtx_Out->pb);
-	avformat_free_context(pFormatCtx_Out);
-
-	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-	if (pFormatCtx_Video != NULL)
-	{
-		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-		avformat_free_context(pFormatCtx_Video);
-		pFormatCtx_Video = NULL;
-	}
-	if (pFormatCtx_Audio != NULL)
-	{
-		avformat_free_context(pFormatCtx_Audio);
-		pFormatCtx_Audio = NULL;
-	}
-#else
-#endif
-printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return 0;
 }
 
@@ -802,7 +568,7 @@ int Start_SDL_Rec(int argc, char* argv[])
 		printf("Could not initialize SDL - %s\n", SDL_GetError());
 		return -1;
 	}
-	int screen_w = 640, screen_h = 360;
+	int screen_w = 640, screen_h = 480;
 	const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 	//Half of the Desktop's width and height.
 	screen_w = vi->current_w / 2;
@@ -905,6 +671,239 @@ int Start_SDL_Rec(int argc, char* argv[])
 	return 0;
 }
 
-
-
 #endif
+
+
+int Start_Rec(int argc, _TCHAR* argv[])
+{
+	int ret;
+	av_register_all();
+	avdevice_register_all();
+	if (OpenVideoCapture() < 0)
+	{
+		return -1;
+	}
+	if (OpenAudioCapture() < 0)
+	{
+		return -1;
+	}
+	if (OpenOutPut() < 0)
+	{
+		return -1;
+	}
+
+	InitializeCriticalSection(&VideoSection);
+	InitializeCriticalSection(&AudioSection);
+
+	AVFrame *picture = av_frame_alloc();
+	int size = avpicture_get_size(pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt,
+		pFormatCtx_Out->streams[VideoIndex]->codec->width, pFormatCtx_Out->streams[VideoIndex]->codec->height);
+	picture_buf = new uint8_t[size];
+
+	avpicture_fill((AVPicture *)picture, picture_buf,
+		pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt,
+		pFormatCtx_Out->streams[VideoIndex]->codec->width,
+		pFormatCtx_Out->streams[VideoIndex]->codec->height);
+
+
+
+	//star cap screen thread
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	CreateThread(NULL, 0, ScreenCapThreadProc, 0, 0, NULL);
+	//star cap audio thread
+	CreateThread(NULL, 0, AudioCapThreadProc, 0, 0, NULL);
+	//CreateThread(NULL, 0, SetRecStat, 0, 0, NULL);
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	int64_t cur_pts_v = 0, cur_pts_a = 0;
+	int VideoFrameIndex = 0, AudioFrameIndex = 0;
+
+#if 1
+	while (1)
+	{
+#if 0
+		if (_kbhit() != 0 && bCap)
+#else
+		if (RecStat && bCap)
+#endif
+		{
+			bCap = false;
+			RecStat = false;
+			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+			Sleep(2000);//简单的用sleep等待采集线程关闭
+		}
+		if (fifo_audio && fifo_video)
+		{
+			int sizeAudio = av_audio_fifo_size(fifo_audio);
+			int sizeVideo = av_fifo_size(fifo_video);
+			/* Cant not print here */
+			//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+			//缓存数据写完就结束循环
+			if (av_audio_fifo_size(fifo_audio) <= pFormatCtx_Out->streams[AudioIndex]->codec->frame_size &&
+				av_fifo_size(fifo_video) <= frame_size && !bCap)
+			{
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				break;
+			}
+		}
+
+		if (av_compare_ts(cur_pts_v, pFormatCtx_Out->streams[VideoIndex]->time_base,
+			cur_pts_a, pFormatCtx_Out->streams[AudioIndex]->time_base) <= 0)
+		{
+			//			printf("--James--[%s:%d]---avfifo size:%d, frame_size:%d.\n", __FILE__, __LINE__, av_fifo_size(fifo_video) , frame_size);
+			//read data from fifo
+			if (av_fifo_size(fifo_video) < frame_size && !bCap)
+			{
+				/*Can not print here*/
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				cur_pts_v = 0x7fffffffffffffff;
+			}
+			if (av_fifo_size(fifo_video) >= size)
+			{
+				//				printf("--James--[%s:%d]---av_fifo_size(fifo_video):%d,%d\n", __FILE__, __LINE__,av_fifo_size(fifo_video),size);
+				EnterCriticalSection(&VideoSection);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				//picture_buf = (uint8_t*)malloc(size);
+				//memset(picture_buf, 0x0, size);
+				av_fifo_generic_read(fifo_video, picture_buf, size, NULL);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				LeaveCriticalSection(&VideoSection);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+
+				avpicture_fill((AVPicture *)picture, picture_buf,
+					pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt,
+					pFormatCtx_Out->streams[VideoIndex]->codec->width,
+					pFormatCtx_Out->streams[VideoIndex]->codec->height);
+
+				//pts = n * (（1 / timbase）/ fps);
+				picture->pts = VideoFrameIndex * ((pFormatCtx_Video->streams[0]->time_base.den / pFormatCtx_Video->streams[0]->time_base.num) / 15);
+
+				int got_picture = 0;
+				AVPacket pkt;
+				av_init_packet(&pkt);
+
+				pkt.data = NULL;
+				pkt.size = 0;
+				int ret = avcodec_encode_video2(pFormatCtx_Out->streams[VideoIndex]->codec, &pkt, picture, &got_picture);
+				if (ret < 0)
+				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					//编码错误,不理会此帧
+					continue;
+				}
+
+				if (got_picture == 1)
+				{
+					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					pkt.stream_index = VideoIndex;
+					pkt.pts = av_rescale_q_rnd(pkt.pts, pFormatCtx_Video->streams[0]->time_base,
+						pFormatCtx_Out->streams[VideoIndex]->time_base, (AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+					pkt.dts = av_rescale_q_rnd(pkt.dts, pFormatCtx_Video->streams[0]->time_base,
+						pFormatCtx_Out->streams[VideoIndex]->time_base, (AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+
+					pkt.duration = ((pFormatCtx_Out->streams[0]->time_base.den / pFormatCtx_Out->streams[0]->time_base.num) / 15);
+
+					cur_pts_v = pkt.pts;
+
+					ret = av_interleaved_write_frame(pFormatCtx_Out, &pkt);
+					//delete[] pkt.data;
+					av_free_packet(&pkt);
+				}
+				//free(picture_buf);
+				VideoFrameIndex++;
+			}
+		}
+		else
+		{
+			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+			if (NULL == fifo_audio)
+			{
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				continue;//还未初始化fifo
+			}
+			if (av_audio_fifo_size(fifo_audio) < pFormatCtx_Out->streams[AudioIndex]->codec->frame_size && !bCap)
+			{
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				cur_pts_a = 0x7fffffffffffffff;
+			}
+			if (av_audio_fifo_size(fifo_audio) >=
+				(pFormatCtx_Out->streams[AudioIndex]->codec->frame_size > 0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024))
+			{
+				/* Can not print here*/
+				AVFrame *frame;
+				frame = av_frame_alloc();
+				frame->nb_samples = pFormatCtx_Out->streams[AudioIndex]->codec->frame_size>0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024;
+				frame->channel_layout = pFormatCtx_Out->streams[AudioIndex]->codec->channel_layout;
+				frame->format = pFormatCtx_Out->streams[AudioIndex]->codec->sample_fmt;
+				frame->sample_rate = pFormatCtx_Out->streams[AudioIndex]->codec->sample_rate;
+				av_frame_get_buffer(frame, 0);
+
+				EnterCriticalSection(&AudioSection);
+				av_audio_fifo_read(fifo_audio, (void **)frame->data,
+					(pFormatCtx_Out->streams[AudioIndex]->codec->frame_size > 0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024));
+				LeaveCriticalSection(&AudioSection);
+
+				if (pFormatCtx_Out->streams[0]->codec->sample_fmt != pFormatCtx_Audio->streams[AudioIndex]->codec->sample_fmt
+					|| pFormatCtx_Out->streams[0]->codec->channels != pFormatCtx_Audio->streams[AudioIndex]->codec->channels
+					|| pFormatCtx_Out->streams[0]->codec->sample_rate != pFormatCtx_Audio->streams[AudioIndex]->codec->sample_rate)
+				{
+					//Must not add debug here
+					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					//如果输入和输出的音频格式不一样 需要重采样，这里是一样的就没做
+				}
+
+				AVPacket pkt_out;
+				av_init_packet(&pkt_out);
+				int got_picture = -1;
+				pkt_out.data = NULL;
+				pkt_out.size = 0;
+
+				frame->pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
+				if (avcodec_encode_audio2(pFormatCtx_Out->streams[AudioIndex]->codec, &pkt_out, frame, &got_picture) < 0)
+				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					printf("can not decoder a frame");
+				}
+				av_frame_free(&frame);
+				if (got_picture)
+				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					pkt_out.stream_index = AudioIndex;
+					pkt_out.pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
+					pkt_out.dts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
+					pkt_out.duration = pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
+
+					cur_pts_a = pkt_out.pts;
+
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+					int ret = av_interleaved_write_frame(pFormatCtx_Out, &pkt_out);
+					av_free_packet(&pkt_out);
+				}
+				AudioFrameIndex++;
+			}
+		}
+	}
+
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	av_write_trailer(pFormatCtx_Out);
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	avio_close(pFormatCtx_Out->pb);
+	avformat_free_context(pFormatCtx_Out);
+
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	if (pFormatCtx_Video != NULL)
+	{
+		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+		avformat_free_context(pFormatCtx_Video);
+		pFormatCtx_Video = NULL;
+	}
+	if (pFormatCtx_Audio != NULL)
+	{
+		avformat_free_context(pFormatCtx_Audio);
+		pFormatCtx_Audio = NULL;
+	}
+#else
+#endif
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
+	return 0;
+}
+

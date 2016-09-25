@@ -32,7 +32,11 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	//ProcessManager mproc;
 	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
 	printf("=================== Start Rec ================\n");
+#if 0
 	Start_Rec(0, NULL);
+#else
+	Start_SDL_Rec(0, NULL);
+#endif
 	printf("=================== Stop Rec ================\n");
 #endif
 	AfxEndThread(ret,TRUE/*是否删除现成所占用的内存*/ ); //提前退出线程函数
