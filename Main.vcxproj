@@ -168,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="logo.bmp" />
+	<Image Include="logo_rec.bmp" />
     <Image Include="res\Main.ico" />
   </ItemGroup>
   <ItemGroup>

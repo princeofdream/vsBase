@@ -20,6 +20,7 @@ public:
 	//{{AFX_DATA(CFloatWnd)
 	enum { IDD = IDD_FLOATWND };
 	CStatic	m_Logo;
+	CStatic	m_Logo_rec;
 	//}}AFX_DATA
 
 // Overrides
@@ -44,6 +45,8 @@ protected:
 	afx_msg void OnNcLButtonDblClk(UINT nFlags, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnStnDblclickLogo();
 };
 
 //{{AFX_INSERT_LOCATION}}

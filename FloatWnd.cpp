@@ -29,6 +29,7 @@ void CFloatWnd::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CFloatWnd)
 	DDX_Control(pDX, IDC_LOGO, m_Logo);
+	//DDX_Control(pDX, IDC_LOGO, m_Logo_rec);
 	//}}AFX_DATA_MAP
 }
 
@@ -41,6 +42,7 @@ BEGIN_MESSAGE_MAP(CFloatWnd, CDialog)
 	ON_COMMAND(ID_SHOW, OnShow)
 	ON_WM_NCLBUTTONDBLCLK()
 	//}}AFX_MSG_MAP
+	ON_STN_DBLCLK(IDC_LOGO, &CFloatWnd::OnStnDblclickLogo)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -52,18 +54,22 @@ BOOL CFloatWnd::OnInitDialog()
 	
 	// TODO: Add extra initialization here
 	CBitmap m_Bitmap;
+	BITMAP bmp;
 	HBITMAP hBitmap = m_Logo.GetBitmap();
+
 	ASSERT(hBitmap);
 
 	m_Bitmap.Attach(hBitmap);
-	BITMAP bmp;
+
 	m_Bitmap.GetBitmap(&bmp);
 
+	//m_Logo.SetBitmap(hBitmap);
 	int nX = bmp.bmWidth;
 	int nY = bmp.bmHeight;
 
 	MoveWindow(0,0,nX,nY);	
 	m_Logo.MoveWindow(0,0,nX,nY);
+
 	CenterWindow();
 	::SetWindowPos(m_hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE | SWP_NOSIZE);
 
@@ -157,13 +163,20 @@ void CFloatWnd::OnUpdateTransparent(int iTransparent)
 void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point) 
 {
 	// TODO: Add your message handler code here and/or call default	
-	CWnd *pParent = GetParent();
-	ASSERT(pParent);
-	
-	if(!pParent->IsWindowVisible())
-		pParent->ShowWindow(SW_SHOW);
+	//CWnd *pParent = GetParent();
+	//ASSERT(pParent);
+	//
+	//if(!pParent->IsWindowVisible())
+	//	pParent->ShowWindow(SW_SHOW);
 
-	pParent->SetForegroundWindow();
+	//pParent->SetForegroundWindow();
+	printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
+	//CDialog::OnNcLButtonDblClk(nFlags, point);
+}
 
-	CDialog::OnNcLButtonDblClk(nFlags, point);
+
+void CFloatWnd::OnStnDblclickLogo()
+{
+	printf("Enter double click issue!---[%s:%d]---\n",__FILE__,__LINE__);
+	// TODO: 在此添加控件通知处理程序代码
 }

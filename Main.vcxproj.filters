@@ -72,6 +72,9 @@
     <Image Include="logo.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+	<Image Include="logo_rec.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="res\Main.ico">
       <Filter>Resource Files</Filter>
     </Image>
