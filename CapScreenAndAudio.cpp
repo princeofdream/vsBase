@@ -131,7 +131,7 @@ int OpenVideoCapture()
 	
 
 	img_convert_ctx = sws_getContext(pCodecCtx_Video->width, pCodecCtx_Video->height, pCodecCtx_Video->pix_fmt, 
-		pCodecCtx_Video->width, pCodecCtx_Video->height, PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL); 
+		pCodecCtx_Video->width, pCodecCtx_Video->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL); 
 
 	frame_size = avpicture_get_size(pCodecCtx_Video->pix_fmt, pCodecCtx_Video->width, pCodecCtx_Video->height);
 	//ÉêÇë30Ö¡»º´æ
@@ -597,7 +597,7 @@ int Start_SDL_Rec(int argc, char* argv[])
 #endif  
 
 	struct SwsContext *img_convert_ctx;
-	img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+	img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
 	//------------------------------
 	SDL_Thread *video_tid = SDL_CreateThread(sfp_refresh_thread, NULL);
 	//
@@ -643,6 +643,11 @@ int Start_SDL_Rec(int argc, char* argv[])
 			}
 			else {
 				//Exit Thread
+				thread_exit = 1;
+				break;
+			}
+			if (RecStat)
+			{
 				thread_exit = 1;
 				break;
 			}
@@ -757,7 +762,7 @@ int Start_Rec(int argc, _TCHAR* argv[])
 				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				cur_pts_v = 0x7fffffffffffffff;
 			}
-			if (av_fifo_size(fifo_video) >= size)
+			if (av_fifo_size(fifo_video) >= size /*&& RecStat == FALSE*/)
 			{
 				//				printf("--James--[%s:%d]---av_fifo_size(fifo_video):%d,%d\n", __FILE__, __LINE__,av_fifo_size(fifo_video),size);
 				EnterCriticalSection(&VideoSection);

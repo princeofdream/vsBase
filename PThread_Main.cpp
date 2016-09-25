@@ -32,7 +32,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	//ProcessManager mproc;
 	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
 	printf("=================== Start Rec ================\n");
-#if 0
+#if 1
 	Start_Rec(0, NULL);
 #else
 	Start_SDL_Rec(0, NULL);
