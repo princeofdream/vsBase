@@ -42,6 +42,11 @@
     <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>include;$(IncludePath)</IncludePath>
+    <LibraryPath>lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
@@ -137,9 +142,11 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>.\Debug\Main.exe</OutputFile>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CapScreenAndAudio.cpp" />
     <ClCompile Include="FloatWnd.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainDlg.cpp" />
@@ -168,7 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="logo.bmp" />
-	<Image Include="logo_rec.bmp" />
+    <Image Include="logo_rec.bmp" />
     <Image Include="res\Main.ico" />
   </ItemGroup>
   <ItemGroup>
