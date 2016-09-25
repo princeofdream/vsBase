@@ -21,6 +21,7 @@ CFloatWnd::CFloatWnd(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(CFloatWnd)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
+	rec_flag = false;
 }
 
 
@@ -162,6 +163,21 @@ void CFloatWnd::OnUpdateTransparent(int iTransparent)
 
 void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point) 
 {
+	CBitmap CBmp;
+	if (rec_flag == false)
+	{
+		rec_flag = true;
+		CBmp.LoadMappedBitmap(IDB_BITMAP2, 0, 0, 0);
+		m_Logo.SetBitmap(HBITMAP(CBmp));
+	}
+	else
+	{
+		rec_flag = false;
+		CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
+		m_Logo.SetBitmap(HBITMAP(CBmp));
+	}
+	
+
 	// TODO: Add your message handler code here and/or call default	
 	//CWnd *pParent = GetParent();
 	//ASSERT(pParent);

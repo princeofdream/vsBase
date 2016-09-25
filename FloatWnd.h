@@ -7,6 +7,10 @@
 // FloatWnd.h : header file
 //
 
+#include <atlimage.h>
+#include <WinUser.h>
+#include <Windows.h>
+
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
 
@@ -20,7 +24,7 @@ public:
 	//{{AFX_DATA(CFloatWnd)
 	enum { IDD = IDD_FLOATWND };
 	CStatic	m_Logo;
-	CStatic	m_Logo_rec;
+	bool rec_flag;
 	//}}AFX_DATA
 
 // Overrides
