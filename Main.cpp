@@ -31,6 +31,10 @@ CMainApp::CMainApp()
 	// Place all significant initialization in InitInstance
 }
 
+CMainApp::~CMainApp()
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // The one and only CMainApp object
 

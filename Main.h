@@ -14,6 +14,11 @@
 
 #include "resource.h"		// main symbols
 
+#define ST_DEBUG
+#ifdef ST_DEBUG
+#include "st_debug.h"
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // CMainApp:
 // See Main.cpp for the implementation of this class
@@ -23,6 +28,7 @@ class CMainApp : public CWinApp
 {
 public:
 	CMainApp();
+	~CMainApp();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

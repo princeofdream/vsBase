@@ -18,6 +18,7 @@ class CMainDlg : public CDialog
 // Construction
 public:
 	CMainDlg(CWnd* pParent = NULL);	// standard constructor
+	~CMainDlg();
 
 // Dialog Data
 	//{{AFX_DATA(CMainDlg)
@@ -50,6 +51,10 @@ protected:
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedStartCmd();
+	afx_msg void OnBnClickedStopCmd();
+	afx_msg void OnBnClickedRunRec();
 };
 
 //{{AFX_INSERT_LOCATION}}

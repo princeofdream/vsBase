@@ -11,6 +11,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+st_debug m_debug;
+
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
 
@@ -66,10 +68,20 @@ CMainDlg::CMainDlg(CWnd* pParent /*=NULL*/)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+	m_debug.init_debug_env();
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	iTransparent = 255;
 	pFloatWnd = NULL;
+}
+
+CMainDlg::~CMainDlg()
+{
+	bool flag = m_debug.get_console_flag();
+	if (flag)
+	{
+		m_debug.release_debug_env();
+	}
 }
 
 void CMainDlg::DoDataExchange(CDataExchange* pDX)
@@ -87,6 +99,9 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_HSCROLL()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_START_CMD, &CMainDlg::OnBnClickedStartCmd)
+	ON_BN_CLICKED(IDC_STOP_CMD, &CMainDlg::OnBnClickedStopCmd)
+	ON_BN_CLICKED(IDC_RUN_REC, &CMainDlg::OnBnClickedRunRec)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -241,4 +256,37 @@ void CMainDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	pFloatWnd->OnUpdateTransparent(iCurPos);
 	
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
+}
+
+
+void CMainDlg::OnBnClickedStartCmd()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	bool flag = m_debug.get_console_flag();
+	if (!flag)
+	{
+		m_debug.init_debug_env();
+	}
+}
+
+
+void CMainDlg::OnBnClickedStopCmd()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	bool flag = m_debug.get_console_flag();
+	if (flag)
+	{
+		m_debug.release_debug_env();
+	}
+}
+
+
+void CMainDlg::OnBnClickedRunRec()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	for (int i0 = 0; i0 < 10; i0++)
+	{
+		JCG();
+		printf("Loop --> %d .\n", i0);
+	}
 }

@@ -26,6 +26,7 @@ int st_debug::init_debug_env(void)
 	freopen("CONOUT$", "w+t", stdout);
 	freopen("CONIN$", "r+t", stdin);
 
+	set_console_flag(true);
 	return 0;
 }
 
@@ -34,7 +35,18 @@ int st_debug::release_debug_env(void)
 	fclose(stdout);
 	fclose(stdin);
 	FreeConsole();
+	set_console_flag(false);
 	return 0;
+}
+
+void st_debug::set_console_flag(bool stat)
+{
+	console_flag = stat;
+}
+
+bool st_debug::get_console_flag()
+{
+	return console_flag;
 }
 
 
