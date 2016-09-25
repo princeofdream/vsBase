@@ -331,7 +331,8 @@ void CMainDlg::OnBnClickedRunRec()
 #endif
 	pParam = NULL;
 	PThread_Main mpthread;
-	mpthread.Start_Pthread(&pParam);
+	mpthread.Start_PThread(&pParam);
 	printf("============ END =============\n");
 }
+
 
