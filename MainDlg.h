@@ -13,6 +13,7 @@
 
 #include "FloatWnd.h"
 #include "PThread_Main.h"
+#include "ProcessManager.h"
 
 //extern UINT __cdecl AfxThreadProc(LPVOID pParam);
 

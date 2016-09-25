@@ -19,6 +19,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	int ret = 0;
 	CString * pStr = (CString*)pParam;
 	//*pStr = _T("Hello World!");
+#if 0
 	while (true)
 	{
 		printf("Thread test loop: %d.\n", i0);
@@ -27,6 +28,10 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 			break;
 		Sleep(500);
 	}
+#else
+	ProcessManager mproc;
+	mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
+#endif
 	AfxEndThread(ret,TRUE/*是否删除现成所占用的内存*/ ); //提前退出线程函数
 	return 0;
 }

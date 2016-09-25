@@ -1,5 +1,6 @@
 #pragma once
 #include "afxwin.h"
+#include "ProcessManager.h"
 
 UINT __cdecl ThreadProc(LPVOID pParam);
 
