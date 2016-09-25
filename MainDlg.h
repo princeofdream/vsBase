@@ -12,9 +12,7 @@
 // CMainDlg dialog
 
 #include "FloatWnd.h"
-
-
-UINT __cdecl AfxThreadProc(LPVOID pParam);
+#include "PThread_Main.h"
 
 class CMainDlg : public CDialog
 {
