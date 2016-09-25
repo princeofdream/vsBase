@@ -288,7 +288,7 @@ int Start_Rec(int argc, _TCHAR* argv[])
 	CreateThread( NULL, 0, ScreenCapThreadProc, 0, 0, NULL);
 	//star cap audio thread
 	CreateThread( NULL, 0, AudioCapThreadProc, 0, 0, NULL);
-	CreateThread(NULL, 0, SetRecStat, 0, 0, NULL);
+	//CreateThread(NULL, 0, SetRecStat, 0, 0, NULL);
 	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	int64_t cur_pts_v=0,cur_pts_a=0;
 	int VideoFrameIndex = 0, AudioFrameIndex = 0;
@@ -298,7 +298,7 @@ int Start_Rec(int argc, _TCHAR* argv[])
 #if 0
 		if (_kbhit() != 0 && bCap)
 #else
-		if (RecStat)
+		if (RecStat && bCap)
 #endif
 		{
 			bCap = false;
@@ -560,6 +560,7 @@ DWORD WINAPI AudioCapThreadProc( LPVOID lpParam )
 
 DWORD WINAPI SetRecStat(LPVOID lpParam)
 {
+#if 0
 	int m_count = 0;
 	while(m_count <= 10)
 	{
@@ -569,6 +570,9 @@ DWORD WINAPI SetRecStat(LPVOID lpParam)
 	}
 	RecStat = true;
 	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+#else
+	RecStat = true;
+#endif
 	return 0;
 }
 

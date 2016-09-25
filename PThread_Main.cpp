@@ -19,7 +19,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	int ret = 0;
 	CString * pStr = (CString*)pParam;
 	//*pStr = _T("Hello World!");
-#if 1
+#if 0
 	while (true)
 	{
 		printf("Thread test loop: %d.\n", i0);
@@ -29,9 +29,11 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 		Sleep(500);
 	}
 #else
-	ProcessManager mproc;
+	//ProcessManager mproc;
 	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
-	mproc.Start_New_Process("Rec.bat", "", "", NULL);
+	printf("=================== Start Rec ================\n");
+	Start_Rec(0, NULL);
+	printf("=================== Stop Rec ================\n");
 #endif
 	AfxEndThread(ret,TRUE/*是否删除现成所占用的内存*/ ); //提前退出线程函数
 	return 0;
@@ -41,7 +43,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 
 UINT PThread_Main::Start_PThread(long* pParam)
 {
-#if 0	//thread test
+#if 1	//thread test
 	CWinThread *pThread = NULL;
 	CString strArg = _T("");
 
@@ -60,10 +62,6 @@ UINT PThread_Main::Start_PThread(long* pParam)
 		//WaitForSingleObject(pThread->m_hThread, INFINITE); //等待线程结束
 														   //AfxMessageBox(strArg);
 	}
-#else
-	printf("=================== Start Rec ================\n");
-	Start_Rec(0,NULL);
-	printf("=================== Stop Rec ================\n");
 #endif
 	return 0;
 }

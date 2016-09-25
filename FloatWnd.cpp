@@ -180,7 +180,7 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 		//if(!pParent->IsWindowVisible())
 		//	pParent->ShowWindow(SW_SHOW);
 
-		CreateThread(NULL, 0, CheckRecStatThread, m_hWnd, 0, NULL);
+		//CreateThread(NULL, 0, CheckRecStatThread, m_hWnd, 0, NULL);
 		printf("--James--[%s:%d]---Create thread success\n", __FILE__, __LINE__);
 #if 1
 		mpt.Start_PThread(NULL);
@@ -224,7 +224,7 @@ DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
 		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 		Sleep(1000);
 	}
-	PostMessage(get_hwnd,WM_MYMESSAGE, 0, 0);
+	//PostMessage(get_hwnd,WM_MYMESSAGE, 0, 0);
 	//rec_flag = false;
 	//CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
 	//m_Logo.SetBitmap(HBITMAP(CBmp));
@@ -239,6 +239,7 @@ DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
 LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam)
 {
 	printf("--James--[%s:%d]---Recive Message!\n", __FILE__, __LINE__);
+	SetRecStat(NULL);
 	return 0;
 }
 
