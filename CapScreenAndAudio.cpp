@@ -15,6 +15,7 @@ extern "C"
 #include <libswscale/swscale.h>
 #include <libavdevice/avdevice.h>
 #include <libavutil/audio_fifo.h>
+#include <SDL/SDL.h>
 
 #pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avformat.lib")
@@ -28,6 +29,37 @@ extern "C"
 #pragma comment(lib, "swscale.lib")
 #ifdef __cplusplus
 };
+#endif
+
+
+
+
+#undef USE_SDL
+#define USE_SDL
+
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
+
+
+#ifdef USE_SDL
+
+
+//Output YUV420P   
+#define OUTPUT_YUV420P 0  
+//'1' Use Dshow   
+//'0' Use GDIgrab  
+#define USE_DSHOW 0  
+
+//Refresh Event  
+#define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)  
+
+#define SFM_BREAK_EVENT  (SDL_USEREVENT + 2)  
+//Output YUV420P   
+#define OUTPUT_YUV420P 0
+
+
+int thread_exit = 0;
+
+
 #endif
 
 AVFormatContext	*pFormatCtx_Video = NULL, *pFormatCtx_Audio = NULL, *pFormatCtx_Out = NULL;
@@ -106,6 +138,7 @@ int OpenVideoCapture()
 	//申请30帧缓存
 	fifo_video = av_fifo_alloc(30 * avpicture_get_size(AV_PIX_FMT_YUV420P, pCodecCtx_Video->width, pCodecCtx_Video->height));
 
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return 0;
 }
 
@@ -116,6 +149,7 @@ static char *dup_wchar_to_utf8(wchar_t *w)
 	s = (char *) av_malloc(l);
 	if (s)
 		WideCharToMultiByte(CP_UTF8, 0, w, -1, s, l, 0, 0);
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return s;
 }
 
@@ -148,7 +182,7 @@ int OpenAudioCapture()
 		printf("can not find or open audio decoder!\n");
 	}
 
-	
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 
 	return 0;
 }
@@ -248,11 +282,13 @@ int OpenOutPut()
 		return -1;
 	}
 
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return 0;
 }
 
 int Start_Rec(int argc, _TCHAR* argv[])
 {
+	int ret;
 	av_register_all();
 	avdevice_register_all();
 	if (OpenVideoCapture() < 0)
@@ -293,6 +329,7 @@ int Start_Rec(int argc, _TCHAR* argv[])
 	int64_t cur_pts_v=0,cur_pts_a=0;
 	int VideoFrameIndex = 0, AudioFrameIndex = 0;
 
+#if 1
 	while(1)
 	{
 #if 0
@@ -310,10 +347,13 @@ int Start_Rec(int argc, _TCHAR* argv[])
 		{
 			int sizeAudio = av_audio_fifo_size(fifo_audio);
 			int sizeVideo = av_fifo_size(fifo_video);
+			/* Cant not print here */
+			//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 			//缓存数据写完就结束循环
 			if (av_audio_fifo_size(fifo_audio) <= pFormatCtx_Out->streams[AudioIndex]->codec->frame_size && 
 				av_fifo_size(fifo_video) <= frame_size && !bCap)
 			{
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				break;
 			}
 		}
@@ -321,16 +361,25 @@ int Start_Rec(int argc, _TCHAR* argv[])
 		if(av_compare_ts(cur_pts_v, pFormatCtx_Out->streams[VideoIndex]->time_base, 
 			cur_pts_a,pFormatCtx_Out->streams[AudioIndex]->time_base) <= 0)
 		{
+//			printf("--James--[%s:%d]---avfifo size:%d, frame_size:%d.\n", __FILE__, __LINE__, av_fifo_size(fifo_video) , frame_size);
 			//read data from fifo
 			if (av_fifo_size(fifo_video) < frame_size && !bCap)
 			{
+				/*Can not print here*/
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				cur_pts_v = 0x7fffffffffffffff;
 			}
 			if(av_fifo_size(fifo_video) >= size)
 			{
+//				printf("--James--[%s:%d]---av_fifo_size(fifo_video):%d,%d\n", __FILE__, __LINE__,av_fifo_size(fifo_video),size);
 				EnterCriticalSection(&VideoSection);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+				//picture_buf = (uint8_t*)malloc(size);
+				//memset(picture_buf, 0x0, size);
 				av_fifo_generic_read(fifo_video, picture_buf, size, NULL);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				LeaveCriticalSection(&VideoSection);
+				printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				
 				avpicture_fill((AVPicture *)picture, picture_buf, 
 					pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt, 
@@ -349,12 +398,14 @@ int Start_Rec(int argc, _TCHAR* argv[])
 				int ret = avcodec_encode_video2(pFormatCtx_Out->streams[VideoIndex]->codec, &pkt, picture, &got_picture);
 				if(ret < 0)
 				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 					//编码错误,不理会此帧
 					continue;
 				}
 				
 				if (got_picture==1)
 				{
+					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
  					pkt.stream_index = VideoIndex;
 					pkt.pts = av_rescale_q_rnd(pkt.pts, pFormatCtx_Video->streams[0]->time_base, 
 						pFormatCtx_Out->streams[VideoIndex]->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));  
@@ -369,22 +420,27 @@ int Start_Rec(int argc, _TCHAR* argv[])
 					//delete[] pkt.data;
 					av_free_packet(&pkt);
 				}
+				//free(picture_buf);
 				VideoFrameIndex++;
 			}
 		}
 		else
 		{
+			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 			if (NULL == fifo_audio)
 			{
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				continue;//还未初始化fifo
 			}
 			if (av_audio_fifo_size(fifo_audio) < pFormatCtx_Out->streams[AudioIndex]->codec->frame_size && !bCap)
 			{
+				//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 				cur_pts_a = 0x7fffffffffffffff;
 			}
 			if(av_audio_fifo_size(fifo_audio) >= 
 				(pFormatCtx_Out->streams[AudioIndex]->codec->frame_size > 0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size : 1024))
 			{
+				/* Can not print here*/
 				AVFrame *frame;
 				frame = av_frame_alloc();
 				frame->nb_samples = pFormatCtx_Out->streams[AudioIndex]->codec->frame_size>0 ? pFormatCtx_Out->streams[AudioIndex]->codec->frame_size: 1024;
@@ -402,6 +458,8 @@ int Start_Rec(int argc, _TCHAR* argv[])
 					|| pFormatCtx_Out->streams[0]->codec->channels != pFormatCtx_Audio->streams[AudioIndex]->codec->channels 
 					|| pFormatCtx_Out->streams[0]->codec->sample_rate != pFormatCtx_Audio->streams[AudioIndex]->codec->sample_rate)
 				{
+					//Must not add debug here
+					//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 					//如果输入和输出的音频格式不一样 需要重采样，这里是一样的就没做
 				}
 
@@ -414,11 +472,13 @@ int Start_Rec(int argc, _TCHAR* argv[])
 				frame->pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
 				if (avcodec_encode_audio2(pFormatCtx_Out->streams[AudioIndex]->codec, &pkt_out, frame, &got_picture) < 0)
 				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 					printf("can not decoder a frame");
 				}
 				av_frame_free(&frame);
 				if (got_picture) 
 				{
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 					pkt_out.stream_index = AudioIndex;
 					pkt_out.pts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
 					pkt_out.dts = AudioFrameIndex * pFormatCtx_Out->streams[AudioIndex]->codec->frame_size;
@@ -426,6 +486,7 @@ int Start_Rec(int argc, _TCHAR* argv[])
 
 					cur_pts_a = pkt_out.pts;
 					
+					printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 					int ret = av_interleaved_write_frame(pFormatCtx_Out, &pkt_out);
 					av_free_packet(&pkt_out);
 				}
@@ -434,13 +495,16 @@ int Start_Rec(int argc, _TCHAR* argv[])
 		}
 	}
 	
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	av_write_trailer(pFormatCtx_Out);
-
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	avio_close(pFormatCtx_Out->pb);
 	avformat_free_context(pFormatCtx_Out);
 
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	if (pFormatCtx_Video != NULL)
 	{
+		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 		avformat_free_context(pFormatCtx_Video);
 		pFormatCtx_Video = NULL;
 	}
@@ -449,7 +513,9 @@ int Start_Rec(int argc, _TCHAR* argv[])
 		avformat_free_context(pFormatCtx_Audio);
 		pFormatCtx_Audio = NULL;
 	}
-
+#else
+#endif
+printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return 0;
 }
 
@@ -509,6 +575,7 @@ DWORD WINAPI ScreenCapThreadProc( LPVOID lpParam )
 	av_frame_free(&pFrame);
 	av_frame_free(&picture);
 	delete[] picture_buf;
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__, __func__);
 	return 0;
 }
 
@@ -554,6 +621,7 @@ DWORD WINAPI AudioCapThreadProc( LPVOID lpParam )
 		}
 	}
 	av_frame_free(&frame);
+	printf("--James--[%s:%d]---End:%s--\n", __FILE__, __LINE__,__func__);
 	return 0;
 }
 
@@ -576,3 +644,267 @@ DWORD WINAPI SetRecStat(LPVOID lpParam)
 	return 0;
 }
 
+
+
+
+
+#ifdef USE_SDL
+int sfp_refresh_thread(void *opaque)
+{
+	while (thread_exit == 0) {
+		SDL_Event event;
+		event.type = SFM_REFRESH_EVENT;
+		SDL_PushEvent(&event);
+		SDL_Delay(40);
+	}
+	return 0;
+}
+
+//Show Dshow Device
+void show_dshow_device() {
+	AVFormatContext *pFormatCtx = avformat_alloc_context();
+	AVDictionary* options = NULL;
+	av_dict_set(&options, "list_devices", "true", 0);
+	AVInputFormat *iformat = av_find_input_format("dshow");
+	printf("========Device Info=============\n");
+	avformat_open_input(&pFormatCtx, "video=dummy", iformat, &options);
+	printf("================================\n");
+}
+
+//Show AVFoundation Device
+void show_avfoundation_device() {
+	AVFormatContext *pFormatCtx = avformat_alloc_context();
+	AVDictionary* options = NULL;
+	av_dict_set(&options, "list_devices", "true", 0);
+	AVInputFormat *iformat = av_find_input_format("avfoundation");
+	printf("==AVFoundation Device Info===\n");
+	avformat_open_input(&pFormatCtx, "", iformat, &options);
+	printf("=============================\n");
+}
+
+
+
+int Start_SDL_Rec(int argc, char* argv[])
+{
+
+	AVFormatContext	*pFormatCtx;
+	int				i, videoindex;
+	AVCodecContext	*pCodecCtx;
+	AVCodec			*pCodec;
+
+	av_register_all();
+	avformat_network_init();
+	pFormatCtx = avformat_alloc_context();
+
+	//Open File
+	//char filepath[]="src01_480x272_22.h265";
+	//avformat_open_input(&pFormatCtx,filepath,NULL,NULL)
+
+	//Register Device
+	avdevice_register_all();
+	//Windows
+#ifdef _WIN32
+#if USE_DSHOW
+	//Use dshow
+	//
+	//Need to Install screen-capture-recorder
+	//screen-capture-recorder
+	//Website: http://sourceforge.net/projects/screencapturer/
+	//
+	AVInputFormat *ifmt = av_find_input_format("dshow");
+	if (avformat_open_input(&pFormatCtx, "video=screen-capture-recorder", ifmt, NULL) != 0) {
+		printf("Couldn't open input stream.\n");
+		return -1;
+	}
+#else
+	//Use gdigrab
+	AVDictionary* options = NULL;
+	//Set some options
+	//grabbing frame rate
+	//av_dict_set(&options,"framerate","5",0);
+	//The distance from the left edge of the screen or desktop
+	//av_dict_set(&options,"offset_x","20",0);
+	//The distance from the top edge of the screen or desktop
+	//av_dict_set(&options,"offset_y","40",0);
+	//Video frame size. The default is to capture the full screen
+	//av_dict_set(&options,"video_size","640x480",0);
+	AVInputFormat *ifmt = av_find_input_format("gdigrab");
+	if (avformat_open_input(&pFormatCtx, "desktop", ifmt, &options) != 0) {
+		printf("Couldn't open input stream.\n");
+		return -1;
+	}
+
+#endif
+#elif defined linux
+	//Linux
+	AVDictionary* options = NULL;
+	//Set some options
+	//grabbing frame rate
+	//av_dict_set(&options,"framerate","5",0);
+	//Make the grabbed area follow the mouse
+	//av_dict_set(&options,"follow_mouse","centered",0);
+	//Video frame size. The default is to capture the full screen
+	//av_dict_set(&options,"video_size","640x480",0);
+	AVInputFormat *ifmt = av_find_input_format("x11grab");
+	//Grab at position 10,20
+	if (avformat_open_input(&pFormatCtx, ":0.0+10,20", ifmt, &options) != 0) {
+		printf("Couldn't open input stream.\n");
+		return -1;
+	}
+#else
+	show_avfoundation_device();
+	//Mac
+	AVInputFormat *ifmt = av_find_input_format("avfoundation");
+	//Avfoundation
+	//[video]:[audio]
+	if (avformat_open_input(&pFormatCtx, "1", ifmt, NULL) != 0) {
+		printf("Couldn't open input stream.\n");
+		return -1;
+	}
+#endif
+
+	if (avformat_find_stream_info(pFormatCtx, NULL)<0)
+	{
+		printf("Couldn't find stream information.\n");
+		return -1;
+	}
+	videoindex = -1;
+	for (i = 0; i<pFormatCtx->nb_streams; i++)
+		if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+		{
+			videoindex = i;
+			break;
+		}
+	if (videoindex == -1)
+	{
+		printf("Didn't find a video stream.\n");
+		return -1;
+	}
+	pCodecCtx = pFormatCtx->streams[videoindex]->codec;
+	pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
+	if (pCodec == NULL)
+	{
+		printf("Codec not found.\n");
+		return -1;
+	}
+	if (avcodec_open2(pCodecCtx, pCodec, NULL)<0)
+	{
+		printf("Could not open codec.\n");
+		return -1;
+	}
+	AVFrame	*pFrame, *pFrameYUV;
+	pFrame = av_frame_alloc();
+	pFrameYUV = av_frame_alloc();
+	//uint8_t *out_buffer=(uint8_t *)av_malloc(avpicture_get_size(PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height));
+	//avpicture_fill((AVPicture *)pFrameYUV, out_buffer, PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height);
+	//SDL----------------------------
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+		printf("Could not initialize SDL - %s\n", SDL_GetError());
+		return -1;
+	}
+	int screen_w = 640, screen_h = 360;
+	const SDL_VideoInfo *vi = SDL_GetVideoInfo();
+	//Half of the Desktop's width and height.
+	screen_w = vi->current_w / 2;
+	screen_h = vi->current_h / 2;
+	SDL_Surface *screen;
+	screen = SDL_SetVideoMode(screen_w, screen_h, 0, 0);
+
+	if (!screen) {
+		printf("SDL: could not set video mode - exiting:%s\n", SDL_GetError());
+		return -1;
+	}
+	SDL_Overlay *bmp;
+	bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height, SDL_YV12_OVERLAY, screen);
+	SDL_Rect rect;
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = screen_w;
+	rect.h = screen_h;
+	//SDL End------------------------
+	int ret, got_picture;
+
+	AVPacket *packet = (AVPacket *)av_malloc(sizeof(AVPacket));
+
+#if OUTPUT_YUV420P 
+	FILE *fp_yuv = fopen("output.yuv", "wb+");
+#endif  
+
+	struct SwsContext *img_convert_ctx;
+	img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+	//------------------------------
+	SDL_Thread *video_tid = SDL_CreateThread(sfp_refresh_thread, NULL);
+	//
+	SDL_WM_SetCaption("Simplest FFmpeg Grab Desktop", NULL);
+	//Event Loop
+	SDL_Event event;
+
+	for (;;) {
+		//Wait
+		SDL_WaitEvent(&event);
+		if (event.type == SFM_REFRESH_EVENT) {
+			//------------------------------
+			if (av_read_frame(pFormatCtx, packet) >= 0) {
+				if (packet->stream_index == videoindex) {
+					ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
+					if (ret < 0) {
+						printf("Decode Error.\n");
+						return -1;
+					}
+					if (got_picture) {
+						SDL_LockYUVOverlay(bmp);
+						pFrameYUV->data[0] = bmp->pixels[0];
+						pFrameYUV->data[1] = bmp->pixels[2];
+						pFrameYUV->data[2] = bmp->pixels[1];
+						pFrameYUV->linesize[0] = bmp->pitches[0];
+						pFrameYUV->linesize[1] = bmp->pitches[2];
+						pFrameYUV->linesize[2] = bmp->pitches[1];
+						sws_scale(img_convert_ctx, (const uint8_t* const*)pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameYUV->data, pFrameYUV->linesize);
+
+#if OUTPUT_YUV420P  
+						int y_size = pCodecCtx->width*pCodecCtx->height;
+						fwrite(pFrameYUV->data[0], 1, y_size, fp_yuv);    //Y   
+						fwrite(pFrameYUV->data[1], 1, y_size / 4, fp_yuv);  //U  
+						fwrite(pFrameYUV->data[2], 1, y_size / 4, fp_yuv);  //V  
+#endif  
+						SDL_UnlockYUVOverlay(bmp);
+
+						SDL_DisplayYUVOverlay(bmp, &rect);
+
+					}
+				}
+				av_free_packet(packet);
+			}
+			else {
+				//Exit Thread
+				thread_exit = 1;
+				break;
+			}
+		}
+		else if (event.type == SDL_QUIT) {
+			thread_exit = 1;
+			break;
+		}
+
+	}
+
+
+	sws_freeContext(img_convert_ctx);
+
+#if OUTPUT_YUV420P 
+	fclose(fp_yuv);
+#endif 
+
+	SDL_Quit();
+
+	//av_free(out_buffer);
+	av_free(pFrameYUV);
+	avcodec_close(pCodecCtx);
+	avformat_close_input(&pFormatCtx);
+
+	return 0;
+}
+
+
+
+#endif

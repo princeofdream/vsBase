@@ -1,3 +1,17 @@
+Regarding the other link errors about stdio functions (in my case it was sprintf()), you can add legacy_stdio_definitions.lib to your linker options.
+extern "C" { FILE __iob_func[3] = { *stdin,*stdout,*stderr }; }
+
+
+
+
+
+
+
+
+
+
+
+
 ========================================================================
        MICROSOFT FOUNDATION CLASS LIBRARY : Main
 ========================================================================
