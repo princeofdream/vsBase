@@ -47,9 +47,11 @@ int frame_size = 0;
 uint8_t *picture_buf = NULL, *frame_buf = NULL;
 
 bool bCap = true;
+bool RecStat = false;
 
 DWORD WINAPI ScreenCapThreadProc( LPVOID lpParam );
 DWORD WINAPI AudioCapThreadProc( LPVOID lpParam );
+DWORD WINAPI SetRecStat(LPVOID lpParam);
 
 int OpenVideoCapture()
 {
@@ -57,14 +59,17 @@ int OpenVideoCapture()
 	AVInputFormat *ifmt=av_find_input_format("gdigrab");
 	//这里可以加参数打开，例如可以指定采集帧率
 	AVDictionary *options = NULL;
+
+	printf("--James--[%s:%d]---\n",__FILE__,__LINE__);
 	av_dict_set(&options, "framerate", "15", NULL);
 	//av_dict_set(&options,"offset_x","20",0);
 	//The distance from the top edge of the screen or desktop
 	//av_dict_set(&options,"offset_y","40",0);
 	//Video frame size. The default is to capture the full screen
-	av_dict_set(&options,"video_size","320x240",0);
-	av_register_all();
+	av_dict_set(&options,"video_size","1280x720",0);
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	if( (ret = avformat_open_input(&pFormatCtx_Video, "desktop", ifmt, &options))!=0)
+	//if ((ret = avformat_open_input(&pFormatCtx_Video, "Lenovo EasyCamera", ifmt, &options)) != 0)
 	{
 		printf("Couldn't open input stream.%d\n",ret);
 		return -1;
@@ -151,7 +156,7 @@ int OpenAudioCapture()
 int OpenOutPut()
 {
 	AVStream *pVideoStream = NULL, *pAudioStream = NULL;
-	const char *outFileName = "test.mp4";
+	const char *outFileName = "Rec.mp4";
 	avformat_alloc_output_context2(&pFormatCtx_Out, NULL, NULL, outFileName);
 
 	if (pFormatCtx_Video->streams[0]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
@@ -246,7 +251,7 @@ int OpenOutPut()
 	return 0;
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int Start_Rec(int argc, _TCHAR* argv[])
 {
 	av_register_all();
 	avdevice_register_all();
@@ -279,9 +284,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	//star cap screen thread
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	CreateThread( NULL, 0, ScreenCapThreadProc, 0, 0, NULL);
 	//star cap audio thread
 	CreateThread( NULL, 0, AudioCapThreadProc, 0, 0, NULL);
+	CreateThread(NULL, 0, SetRecStat, 0, 0, NULL);
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	int64_t cur_pts_v=0,cur_pts_a=0;
 	int VideoFrameIndex = 0, AudioFrameIndex = 0;
 
@@ -290,10 +298,12 @@ int _tmain(int argc, _TCHAR* argv[])
 #if 0
 		if (_kbhit() != 0 && bCap)
 #else
-		if (bCap)
+		if (RecStat)
 #endif
 		{
 			bCap = false;
+			RecStat = false;
+			printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 			Sleep(2000);//简单的用sleep等待采集线程关闭
 		}
 		if (fifo_audio && fifo_video)
@@ -450,6 +460,7 @@ DWORD WINAPI ScreenCapThreadProc( LPVOID lpParam )
 	AVFrame	*pFrame;
 	pFrame=avcodec_alloc_frame();
 
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	AVFrame *picture = avcodec_alloc_frame();
 	int size = avpicture_get_size(pFormatCtx_Out->streams[VideoIndex]->codec->pix_fmt, 
 		pFormatCtx_Out->streams[VideoIndex]->codec->width, pFormatCtx_Out->streams[VideoIndex]->codec->height);
@@ -527,6 +538,7 @@ DWORD WINAPI AudioCapThreadProc( LPVOID lpParam )
 			continue;//没有获取到数据，继续下一次
 		}
 
+		//printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 		if (NULL == fifo_audio)
 		{
 			fifo_audio = av_audio_fifo_alloc(pFormatCtx_Audio->streams[0]->codec->sample_fmt, 
@@ -544,3 +556,19 @@ DWORD WINAPI AudioCapThreadProc( LPVOID lpParam )
 	av_frame_free(&frame);
 	return 0;
 }
+
+
+DWORD WINAPI SetRecStat(LPVOID lpParam)
+{
+	int m_count = 0;
+	while(m_count <= 10)
+	{
+		++m_count;
+		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+		Sleep(1000);
+	}
+	RecStat = true;
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	return 0;
+}
+

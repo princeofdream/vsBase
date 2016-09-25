@@ -30,7 +30,8 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	}
 #else
 	ProcessManager mproc;
-	mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
+	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
+	mproc.Start_New_Process("Rec.bat", "", "", NULL);
 #endif
 	AfxEndThread(ret,TRUE/*是否删除现成所占用的内存*/ ); //提前退出线程函数
 	return 0;
@@ -60,9 +61,10 @@ UINT PThread_Main::Start_PThread(long* pParam)
 														   //AfxMessageBox(strArg);
 	}
 #else
-	printf("=================== Start Rec ================");
-	OpenVideoCapture();
-	printf("=================== Stop Rec ================");
+	printf("=================== Start Rec ================\n");
+	Start_Rec(0,NULL);
+	//OpenVideoCapture();
+	printf("=================== Stop Rec ================\n");
 #endif
 	return 0;
 }

@@ -14,6 +14,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
 
+DWORD WINAPI CheckRecStatThread(LPVOID lpParam);
+
+
 class CFloatWnd : public CDialog
 {
 // Construction

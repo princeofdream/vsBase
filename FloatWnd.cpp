@@ -170,28 +170,33 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 		rec_flag = true;
 		CBmp.LoadMappedBitmap(IDB_BITMAP2, 0, 0, 0);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
+	
+	
+
+		// TODO: Add your message handler code here and/or call default	
+		//CWnd *pParent = GetParent();
+		//ASSERT(pParent);
+		//
+		//if(!pParent->IsWindowVisible())
+		//	pParent->ShowWindow(SW_SHOW);
+
+		CreateThread(NULL, 0, CheckRecStatThread, 0, 0, NULL);
+
+		PThread_Main mpt;
+		mpt.Start_PThread(NULL);
+
+		//pParent->SetForegroundWindow();
+		printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
+		//CDialog::OnNcLButtonDblClk(nFlags, point);
 	}
 	else
 	{
+#if 0
 		rec_flag = false;
 		CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
+#endif
 	}
-	
-
-	// TODO: Add your message handler code here and/or call default	
-	//CWnd *pParent = GetParent();
-	//ASSERT(pParent);
-	//
-	//if(!pParent->IsWindowVisible())
-	//	pParent->ShowWindow(SW_SHOW);
-
-	PThread_Main mpt;
-	mpt.Start_PThread(NULL);
-
-	//pParent->SetForegroundWindow();
-	printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
-	//CDialog::OnNcLButtonDblClk(nFlags, point);
 }
 
 
@@ -200,3 +205,46 @@ void CFloatWnd::OnStnDblclickLogo()
 	printf("Enter double click issue!---[%s:%d]---\n",__FILE__,__LINE__);
 	// TODO: 在此添加控件通知处理程序代码
 }
+
+
+DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
+{
+#if 1
+	int m_count = 0;
+	CBitmap CBmp;
+
+	while (m_count <= 10)
+	{
+		++m_count;
+		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+		Sleep(1000);
+	}
+	
+	//rec_flag = false;
+	//CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
+	//m_Logo.SetBitmap(HBITMAP(CBmp));
+
+	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+	return 0;
+#else
+	CWinThread *pThread = NULL;
+	CString strArg = _T("");
+
+	pThread = AfxBeginThread(
+		ThreadProc,         //线程启动函数
+		&strArg,          //线程启动函数
+		THREAD_PRIORITY_NORMAL,       //线程优先级
+		0,            //Windows系统一般线程栈大小为1 MB，创建线程的数目与物理内存和栈空间大小有关
+		0,            //线程创建标志，如：CREATE_SUSPENDED
+		NULL);           //系统安全描述，NULL
+
+	if (pThread)
+	{
+		printf("Start PThread Sucess!");
+		//pThread->m_bAutoDelete = TRUE;     //当线程结束是自动清除线程对象,默认是TRUE
+		//WaitForSingleObject(pThread->m_hThread, INFINITE); //等待线程结束
+		//AfxMessageBox(strArg);
+	}
+#endif
+}
+
