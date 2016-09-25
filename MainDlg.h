@@ -13,6 +13,9 @@
 
 #include "FloatWnd.h"
 
+
+UINT __cdecl AfxThreadProc(LPVOID pParam);
+
 class CMainDlg : public CDialog
 {
 // Construction
