@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "Main.h"
 #include "FloatWnd.h"
-#include "PThread_Main.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +34,6 @@ void CFloatWnd::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CFloatWnd, CDialog)
 	//{{AFX_MSG_MAP(CFloatWnd)	
 	ON_WM_NCHITTEST()
@@ -45,6 +43,8 @@ BEGIN_MESSAGE_MAP(CFloatWnd, CDialog)
 	ON_WM_NCLBUTTONDBLCLK()
 	//}}AFX_MSG_MAP
 	ON_STN_DBLCLK(IDC_LOGO, &CFloatWnd::OnStnDblclickLogo)
+	//ON_COMMAND(WM_MYMESSAGE, OnHandleMessage)
+	ON_MESSAGE(WM_MYMESSAGE, OnHandleMessage)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -180,18 +180,20 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 		//if(!pParent->IsWindowVisible())
 		//	pParent->ShowWindow(SW_SHOW);
 
-		CreateThread(NULL, 0, CheckRecStatThread, 0, 0, NULL);
-
-		PThread_Main mpt;
+		CreateThread(NULL, 0, CheckRecStatThread, m_hWnd, 0, NULL);
+		printf("--James--[%s:%d]---Create thread success\n", __FILE__, __LINE__);
+#if 1
 		mpt.Start_PThread(NULL);
-
+#endif
 		//pParent->SetForegroundWindow();
 		printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
 		//CDialog::OnNcLButtonDblClk(nFlags, point);
 	}
 	else
 	{
-#if 0
+		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
+#if 1
+		PostMessage(WM_MYMESSAGE, 0, 0);
 		rec_flag = false;
 		CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
@@ -212,6 +214,9 @@ DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
 #if 1
 	int m_count = 0;
 	CBitmap CBmp;
+	HWND get_hwnd;
+
+	get_hwnd = (HWND)lpParam;
 
 	while (m_count <= 10)
 	{
@@ -219,32 +224,21 @@ DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
 		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 		Sleep(1000);
 	}
-	
+	PostMessage(get_hwnd,WM_MYMESSAGE, 0, 0);
 	//rec_flag = false;
 	//CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
 	//m_Logo.SetBitmap(HBITMAP(CBmp));
-
+	//PostMessage(WM_MYMESSAGE, 0, 0);
 	printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
 	return 0;
 #else
-	CWinThread *pThread = NULL;
-	CString strArg = _T("");
-
-	pThread = AfxBeginThread(
-		ThreadProc,         //线程启动函数
-		&strArg,          //线程启动函数
-		THREAD_PRIORITY_NORMAL,       //线程优先级
-		0,            //Windows系统一般线程栈大小为1 MB，创建线程的数目与物理内存和栈空间大小有关
-		0,            //线程创建标志，如：CREATE_SUSPENDED
-		NULL);           //系统安全描述，NULL
-
-	if (pThread)
-	{
-		printf("Start PThread Sucess!");
-		//pThread->m_bAutoDelete = TRUE;     //当线程结束是自动清除线程对象,默认是TRUE
-		//WaitForSingleObject(pThread->m_hThread, INFINITE); //等待线程结束
-		//AfxMessageBox(strArg);
-	}
 #endif
+}
+
+
+LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam)
+{
+	printf("--James--[%s:%d]---Recive Message!\n", __FILE__, __LINE__);
+	return 0;
 }
 

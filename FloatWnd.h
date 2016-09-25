@@ -11,8 +11,12 @@
 #include <WinUser.h>
 #include <Windows.h>
 
+#include "PThread_Main.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
+
+#define WM_MYMESSAGE (WM_USER+100)
 
 DWORD WINAPI CheckRecStatThread(LPVOID lpParam);
 
@@ -54,6 +58,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnStnDblclickLogo();
+	LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam);
+
+protected:
+	PThread_Main mpt;
 };
 
 //{{AFX_INSERT_LOCATION}}

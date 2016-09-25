@@ -19,7 +19,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	int ret = 0;
 	CString * pStr = (CString*)pParam;
 	//*pStr = _T("Hello World!");
-#if 0
+#if 1
 	while (true)
 	{
 		printf("Thread test loop: %d.\n", i0);
@@ -63,7 +63,6 @@ UINT PThread_Main::Start_PThread(long* pParam)
 #else
 	printf("=================== Start Rec ================\n");
 	Start_Rec(0,NULL);
-	//OpenVideoCapture();
 	printf("=================== Stop Rec ================\n");
 #endif
 	return 0;
