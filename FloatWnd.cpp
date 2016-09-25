@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Main.h"
 #include "FloatWnd.h"
+#include "PThread_Main.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -184,6 +185,9 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 	//
 	//if(!pParent->IsWindowVisible())
 	//	pParent->ShowWindow(SW_SHOW);
+
+	PThread_Main mpt;
+	mpt.Start_PThread(NULL);
 
 	//pParent->SetForegroundWindow();
 	printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);

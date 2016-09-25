@@ -39,6 +39,9 @@
     <ClCompile Include="CapScreenAndAudio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ffmpeg_Encoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Main.rc">
@@ -68,6 +71,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ffmpeg_Encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CapScreenAndAudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,7 +40,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 
 UINT PThread_Main::Start_PThread(long* pParam)
 {
-#if 1	//thread test
+#if 0	//thread test
 	CWinThread *pThread = NULL;
 	CString strArg = _T("");
 
@@ -59,6 +59,10 @@ UINT PThread_Main::Start_PThread(long* pParam)
 		//WaitForSingleObject(pThread->m_hThread, INFINITE); //等待线程结束
 														   //AfxMessageBox(strArg);
 	}
+#else
+	printf("=================== Start Rec ================");
+	OpenVideoCapture();
+	printf("=================== Stop Rec ================");
 #endif
 	return 0;
 }

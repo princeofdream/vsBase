@@ -117,6 +117,7 @@
       <ObjectFileName>.\Debug\</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <AdditionalIncludeDirectories>F:\Work_Space\Develop\FloatWnd\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreLinkEvent>
       <Command>copyright.bat</Command>
@@ -143,10 +144,13 @@
       <OutputFile>.\Debug\Main.exe</OutputFile>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>F:\Work_Space\Develop\FloatWnd\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>swscale.lib;avcodec.lib;avutil.lib;avformat.lib;avdevice.lib;avfilter.lib;swresample.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CapScreenAndAudio.cpp" />
+    <ClCompile Include="Ffmpeg_Encoder.cpp" />
     <ClCompile Include="FloatWnd.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainDlg.cpp" />
@@ -164,6 +168,8 @@
     <ResourceCompile Include="Main.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CapScreenAndAudio.h" />
+    <ClInclude Include="Ffmpeg_Encoder.h" />
     <ClInclude Include="FloatWnd.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="MainDlg.h" />
