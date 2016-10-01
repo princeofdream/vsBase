@@ -11,7 +11,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CMainDlg dialog
 
-#include "FloatWnd.h"
+#include "src/include/FloatWnd.h"
 #include "src/include/PThread_vsBase.h"
 #include "src/include/ProcessManager.h"
 

@@ -16,7 +16,7 @@
 
 #define ST_DEBUG
 #ifdef ST_DEBUG
-#include "st_debug.h"
+#include "src/include/st_debug.h"
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

@@ -151,11 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CapScreenAndAudio.cpp" />
-    <ClCompile Include="FloatWnd.cpp" />
+    <ClCompile Include="src\CapScreenAndAudio.cpp" />
     <ClCompile Include="src\Ffmpeg_Encoder.cpp" />
+    <ClCompile Include="src\FloatWnd.cpp" />
     <ClCompile Include="src\ProcessManager.cpp" />
     <ClCompile Include="src\PThread_vsBase.cpp" />
+    <ClCompile Include="src\StdAfx.cpp" />
+    <ClCompile Include="src\st_debug.cpp" />
     <ClCompile Include="vsBase.cpp" />
     <ClCompile Include="vsBaseDlg.cpp" />
     <ClCompile Include="src\grabScreen.cpp" />
@@ -165,15 +167,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="st_debug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="vsBase.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CapScreenAndAudio.h" />
     <ClInclude Include="def.h" />
-    <ClInclude Include="FloatWnd.h" />
     <ClInclude Include="include\libavcodec\avcodec.h" />
     <ClInclude Include="include\libavcodec\avdct.h" />
     <ClInclude Include="include\libavcodec\avfft.h" />
@@ -196,15 +195,17 @@
     <ClInclude Include="include\libavfilter\buffersink.h" />
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
+    <ClInclude Include="src\include\CapScreenAndAudio.h" />
     <ClInclude Include="src\include\Ffmpeg_Encoder.h" />
+    <ClInclude Include="src\include\FloatWnd.h" />
     <ClInclude Include="src\include\grabScreen.h" />
     <ClInclude Include="src\include\ProcessManager.h" />
     <ClInclude Include="src\include\PThread_vsBase.h" />
+    <ClInclude Include="src\include\st_debug.h" />
     <ClInclude Include="vsBase.h" />
     <ClInclude Include="vsBaseDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="st_debug.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="logo.bmp" />

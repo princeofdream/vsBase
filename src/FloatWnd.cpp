@@ -2,8 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "vsBase.h"
-#include "FloatWnd.h"
+#include "../vsBase.h"
+#include "include/FloatWnd.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
