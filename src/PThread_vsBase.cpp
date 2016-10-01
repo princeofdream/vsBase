@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "PThread_vsBase.h"
-#include "src\grabScreen.h"
+#include "include\PThread_vsBase.h"
+#include "include/grabScreen.h"
 
 
 PThread_vsBase::PThread_vsBase()

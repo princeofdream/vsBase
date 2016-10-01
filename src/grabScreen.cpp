@@ -1,5 +1,5 @@
-
-#include "grabScreen.h"
+#include "stdafx.h"
+#include "include/grabScreen.h"
 
 
 #ifdef	__cplusplus

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Ffmpeg_Encoder.h"
+#include "include/Ffmpeg_Encoder.h"
 
 #ifdef __FFMPEG_ENCODER__
 Ffmpeg_Encoder::Ffmpeg_Encoder()

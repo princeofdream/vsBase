@@ -12,8 +12,8 @@
 // CMainDlg dialog
 
 #include "FloatWnd.h"
-#include "PThread_vsBase.h"
-#include "ProcessManager.h"
+#include "src/include/PThread_vsBase.h"
+#include "src/include/ProcessManager.h"
 
 //extern UINT __cdecl AfxThreadProc(LPVOID pParam);
 

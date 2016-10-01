@@ -6,5 +6,5 @@
 
 int OpenVideoCapture();
 int Start_Rec(int argc, _TCHAR* argv[]);
-int SetRecStat(long* lpParam);
+DWORD WINAPI SetRecStat(LPVOID lpParam);
 

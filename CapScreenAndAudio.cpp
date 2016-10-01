@@ -54,7 +54,7 @@ bool RecStat = false;
 
 DWORD WINAPI ScreenCapThreadProc( LPVOID lpParam );
 DWORD WINAPI AudioCapThreadProc( LPVOID lpParam );
-int SetRecStat(long* lpParam);
+DWORD WINAPI SetRecStat(LPVOID lpParam);
 
 int OpenVideoCapture()
 {
@@ -364,7 +364,7 @@ DWORD WINAPI AudioCapThreadProc( LPVOID lpParam )
 }
 
 
-int SetRecStat(long* lpParam)
+DWORD WINAPI SetRecStat(LPVOID lpParam)
 {
 #if 0
 	int m_count = 0;

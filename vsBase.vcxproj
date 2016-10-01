@@ -112,7 +112,7 @@
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderOutputFile>.\Debug\vsBase.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\Debug\</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
@@ -152,12 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CapScreenAndAudio.cpp" />
-    <ClCompile Include="Ffmpeg_Encoder.cpp" />
     <ClCompile Include="FloatWnd.cpp" />
+    <ClCompile Include="src\Ffmpeg_Encoder.cpp" />
+    <ClCompile Include="src\ProcessManager.cpp" />
+    <ClCompile Include="src\PThread_vsBase.cpp" />
     <ClCompile Include="vsBase.cpp" />
     <ClCompile Include="vsBaseDlg.cpp" />
-    <ClCompile Include="ProcessManager.cpp" />
-    <ClCompile Include="PThread_vsBase.cpp" />
     <ClCompile Include="src\grabScreen.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -172,7 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CapScreenAndAudio.h" />
-    <ClInclude Include="Ffmpeg_Encoder.h" />
+    <ClInclude Include="def.h" />
     <ClInclude Include="FloatWnd.h" />
     <ClInclude Include="include\libavcodec\avcodec.h" />
     <ClInclude Include="include\libavcodec\avdct.h" />
@@ -196,12 +196,13 @@
     <ClInclude Include="include\libavfilter\buffersink.h" />
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
+    <ClInclude Include="src\include\Ffmpeg_Encoder.h" />
+    <ClInclude Include="src\include\grabScreen.h" />
+    <ClInclude Include="src\include\ProcessManager.h" />
+    <ClInclude Include="src\include\PThread_vsBase.h" />
     <ClInclude Include="vsBase.h" />
     <ClInclude Include="vsBaseDlg.h" />
-    <ClInclude Include="ProcessManager.h" />
-    <ClInclude Include="PThread_vsBase.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="src\grabScreen.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="st_debug.h" />
   </ItemGroup>
