@@ -1,7 +1,10 @@
+#include "tchar.h"
+#include <stdarg.h>
+
+
 
 
 int OpenVideoCapture();
 int Start_Rec(int argc, _TCHAR* argv[]);
-int Start_SDL_Rec(int argc, char* argv[]);
-DWORD WINAPI SetRecStat(LPVOID lpParam);
+int SetRecStat(long* lpParam);
 

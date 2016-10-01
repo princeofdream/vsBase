@@ -112,7 +112,7 @@
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderOutputFile>.\Debug\vsBase.pch</PrecompiledHeaderOutputFile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\Debug\</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
@@ -158,6 +158,7 @@
     <ClCompile Include="vsBaseDlg.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="PThread_vsBase.cpp" />
+    <ClCompile Include="src\grabScreen.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
@@ -200,6 +201,7 @@
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="PThread_vsBase.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\grabScreen.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="st_debug.h" />
   </ItemGroup>

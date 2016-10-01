@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PThread_vsBase.h"
+#include "src\grabScreen.h"
 
 
 PThread_vsBase::PThread_vsBase()
@@ -32,7 +33,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 	//ProcessManager mproc;
 	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
 	printf("=================== Start Rec ================\n");
-#if 1
+#if 0
 	Start_Rec(0, NULL);
 #else
 	Start_SDL_Rec(0, NULL);
