@@ -235,8 +235,8 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
-Main.VC.db
+vsBase.VC.db
 
-.vs/Main/v14/.suo
+.vs/vsBase/v14/.suo
 
 

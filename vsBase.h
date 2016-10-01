@@ -1,4 +1,4 @@
-// Main.h : main header file for the MAIN application
+// vsBase.h : main header file for the MAIN application
 //
 
 #if !defined(AFX_MAIN_H__1F10FC0D_E07A_42AD_95DC_DF7B9C129A80__INCLUDED_)
@@ -21,7 +21,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainApp:
-// See Main.cpp for the implementation of this class
+// See vsBase.cpp for the implementation of this class
 //
 
 class CMainApp : public CWinApp

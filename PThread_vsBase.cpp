@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "PThread_Main.h"
+#include "PThread_vsBase.h"
 
 
-PThread_Main::PThread_Main()
+PThread_vsBase::PThread_vsBase()
 {
 }
 
 
-PThread_Main::~PThread_Main()
+PThread_vsBase::~PThread_vsBase()
 {
 }
 
@@ -45,7 +45,7 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 
 
 
-UINT PThread_Main::Start_PThread(long* pParam)
+UINT PThread_vsBase::Start_PThread(long* pParam)
 {
 #if 1	//thread test
 	CWinThread *pThread = NULL;

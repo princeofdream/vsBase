@@ -1,9 +1,9 @@
-// Main.cpp : Defines the class behaviors for the application.
+// vsBase.cpp : Defines the class behaviors for the application.
 //
 
 #include "stdafx.h"
-#include "Main.h"
-#include "MainDlg.h"
+#include "vsBase.h"
+#include "vsBaseDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

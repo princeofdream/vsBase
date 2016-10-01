@@ -68,7 +68,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
-      <PrecompiledHeaderOutputFile>.\Release\Main.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\Release\vsBase.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\Release\</ObjectFileName>
@@ -80,7 +80,7 @@
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TypeLibraryName>.\Release\Main.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Release\vsBase.tlb</TypeLibraryName>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <TargetEnvironment>Win32</TargetEnvironment>
     </Midl>
@@ -90,12 +90,12 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release\Main.bsc</OutputFile>
+      <OutputFile>.\Release\vsBase.bsc</OutputFile>
     </Bscmake>
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
-      <OutputFile>.\Release\Main.exe</OutputFile>
+      <OutputFile>.\Release\vsBase.exe</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <BrowseInformation>true</BrowseInformation>
-      <PrecompiledHeaderOutputFile>.\Debug\Main.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\Debug\vsBase.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <ObjectFileName>.\Debug\</ObjectFileName>
@@ -125,7 +125,7 @@
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TypeLibraryName>.\Debug\Main.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Debug\vsBase.tlb</TypeLibraryName>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <TargetEnvironment>Win32</TargetEnvironment>
     </Midl>
@@ -135,13 +135,13 @@
     </ResourceCompile>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug\Main.bsc</OutputFile>
+      <OutputFile>.\Debug\vsBase.bsc</OutputFile>
     </Bscmake>
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <OutputFile>.\Debug\Main.exe</OutputFile>
+      <OutputFile>.\Debug\vsBase.exe</OutputFile>
       <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>F:\Work_Space\Develop\FloatWnd\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -154,10 +154,10 @@
     <ClCompile Include="CapScreenAndAudio.cpp" />
     <ClCompile Include="Ffmpeg_Encoder.cpp" />
     <ClCompile Include="FloatWnd.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainDlg.cpp" />
+    <ClCompile Include="vsBase.cpp" />
+    <ClCompile Include="vsBaseDlg.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
-    <ClCompile Include="PThread_Main.cpp" />
+    <ClCompile Include="PThread_vsBase.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</PrecompiledHeaderFile>
@@ -167,7 +167,7 @@
     <ClCompile Include="st_debug.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Main.rc" />
+    <ResourceCompile Include="vsBase.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CapScreenAndAudio.h" />
@@ -195,10 +195,10 @@
     <ClInclude Include="include\libavfilter\buffersink.h" />
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="MainDlg.h" />
+    <ClInclude Include="vsBase.h" />
+    <ClInclude Include="vsBaseDlg.h" />
     <ClInclude Include="ProcessManager.h" />
-    <ClInclude Include="PThread_Main.h" />
+    <ClInclude Include="PThread_vsBase.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="st_debug.h" />
@@ -206,10 +206,10 @@
   <ItemGroup>
     <Image Include="logo.bmp" />
     <Image Include="logo_rec.bmp" />
-    <Image Include="res\Main.ico" />
+    <Image Include="res\vsBase.ico" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\Main.rc2" />
+    <CustomBuild Include="res\vsBase.rc2" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -219,7 +219,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="Main.rc" />
+      <UserProperties RESOURCE_FILE="vsBase.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

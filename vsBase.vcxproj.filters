@@ -18,10 +18,10 @@
     <ClCompile Include="FloatWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="vsBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainDlg.cpp">
+    <ClCompile Include="vsBaseDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp">
@@ -30,7 +30,7 @@
     <ClCompile Include="st_debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PThread_Main.cpp">
+    <ClCompile Include="PThread_vsBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProcessManager.cpp">
@@ -44,7 +44,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Main.rc">
+    <ResourceCompile Include="vsBase.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -52,10 +52,10 @@
     <ClInclude Include="FloatWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Main.h">
+    <ClInclude Include="vsBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainDlg.h">
+    <ClInclude Include="vsBaseDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
@@ -67,7 +67,7 @@
     <ClInclude Include="st_debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PThread_Main.h">
+    <ClInclude Include="PThread_vsBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessManager.h">
@@ -153,7 +153,7 @@
     <Image Include="logo_rec.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\Main.ico">
+    <Image Include="res\vsBase.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -161,7 +161,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="res\Main.rc2">
+    <CustomBuild Include="res\vsBase.rc2">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>

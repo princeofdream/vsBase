@@ -11,7 +11,7 @@
 #include <WinUser.h>
 #include <Windows.h>
 
-#include "PThread_Main.h"
+#include "PThread_vsBase.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
@@ -61,7 +61,7 @@ public:
 	LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam);
 
 protected:
-	PThread_Main mpt;
+	PThread_vsBase mpt;
 };
 
 //{{AFX_INSERT_LOCATION}}

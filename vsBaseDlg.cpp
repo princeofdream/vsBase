@@ -1,9 +1,9 @@
-// MainDlg.cpp : implementation file
+// vsBaseDlg.cpp : implementation file
 //
 
 #include "stdafx.h"
-#include "Main.h"
-#include "MainDlg.h"
+#include "vsBase.h"
+#include "vsBaseDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -284,7 +284,7 @@ void CMainDlg::OnBnClickedStopCmd()
 void CMainDlg::OnBnClickedRunRec()
 {
 	long pParam = NULL;
-	PThread_Main mpthread;
+	PThread_vsBase mpthread;
 	mpthread.Start_PThread(&pParam);
 	printf("============ END =============\n");
 }

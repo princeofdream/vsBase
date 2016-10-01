@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="Main" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="vsBase" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=Main - Win32 Debug
+CFG=vsBase - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "Main.mak".
+!MESSAGE NMAKE /f "vsBase.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "Main.mak" CFG="Main - Win32 Debug"
+!MESSAGE NMAKE /f "vsBase.mak" CFG="vsBase - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "Main - Win32 Release" (based on "Win32 (x86) Application")
-!MESSAGE "Main - Win32 Debug" (based on "Win32 (x86) Application")
+!MESSAGE "vsBase - Win32 Release" (based on "Win32 (x86) Application")
+!MESSAGE "vsBase - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -29,7 +29,7 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "Main - Win32 Release"
+!IF  "$(CFG)" == "vsBase - Win32 Release"
 
 # PROP BASE Use_MFC 6
 # PROP BASE Use_Debug_Libraries 0
@@ -58,7 +58,7 @@ SOURCE="$(InputPath)"
 PreLink_Cmds=copyright.bat
 # End Special Build Tool
 
-!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+!ELSEIF  "$(CFG)" == "vsBase - Win32 Debug"
 
 # PROP BASE Use_MFC 6
 # PROP BASE Use_Debug_Libraries 1
@@ -91,8 +91,8 @@ PreLink_Cmds=copyright.bat
 
 # Begin Target
 
-# Name "Main - Win32 Release"
-# Name "Main - Win32 Debug"
+# Name "vsBase - Win32 Release"
+# Name "vsBase - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -102,15 +102,15 @@ SOURCE=.\FloatWnd.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main.cpp
+SOURCE=.\vsBase.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main.rc
+SOURCE=.\vsBase.rc
 # End Source File
 # Begin Source File
 
-SOURCE=.\MainDlg.cpp
+SOURCE=.\vsBaseDlg.cpp
 # End Source File
 # Begin Source File
 
@@ -127,11 +127,11 @@ SOURCE=.\FloatWnd.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main.h
+SOURCE=.\vsBase.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MainDlg.h
+SOURCE=.\vsBaseDlg.h
 # End Source File
 # Begin Source File
 
@@ -151,11 +151,11 @@ SOURCE=.\logo.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\Main.ico
+SOURCE=.\res\vsBase.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\Main.rc2
+SOURCE=.\res\vsBase.rc2
 # End Source File
 # End Group
 # Begin Source File
