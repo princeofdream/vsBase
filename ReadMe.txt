@@ -1,9 +1,8 @@
 ﻿
-
 烧录方法：
-1, 在一张TF卡上的根目录下新建一个文件，/test.c（内容可以为空）
-2，tf插入IBox，按住VCR按键
-3，按Reset按键重启（一直按住VCR按键3~5秒）
+1, 在一张TF卡上的根目录下新建一个文件，/enable_hg_ibox_product（内容可以为空）
+2，tf插入IBox，按住VCR加POWER按键
+3，按Reset按键重启（一直按住VCR加POWER按键3~5秒）
 4，三个LED灯同时快速闪烁即为进入工厂模式
 5，点击运行  factory.bat
 6，输入将要写进IBox的设备ID，回车直接写入
