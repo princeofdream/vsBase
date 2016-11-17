@@ -74,15 +74,15 @@ REM      adb shell "mount -o remount,rw /protect_s"
 	adb shell "mkdir -p /protect_f/IBoxConfig/"
 	adb shell "mkdir -p /protect_s/IBoxConfig/"
 
-	adb push IBoxConfig\CaptureConfig.txt /protect_s/IBoxConfig/ 2>null
-	adb push IBoxConfig\FolderConfig.txt /protect_s/IBoxConfig/ 2>null
-	adb push IBoxConfig\RTSPConfig.txt /protect_s/IBoxConfig/ 2>null
-	adb push IBoxConfig\VideoRecordConfig.txt /protect_s/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\CaptureConfig.txt /protect_s/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\FolderConfig.txt /protect_s/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\RTSPConfig.txt /protect_s/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\VideoRecordConfig.txt /protect_s/IBoxConfig/ 2>null
 
-	adb push IBoxConfig\CaptureConfig.txt /protect_f/IBoxConfig/ 2>null
-	adb push IBoxConfig\FolderConfig.txt /protect_f/IBoxConfig/ 2>null
-	adb push IBoxConfig\RTSPConfig.txt /protect_f/IBoxConfig/ 2>null
-	adb push IBoxConfig\VideoRecordConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\CaptureConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\FolderConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\RTSPConfig.txt /protect_f/IBoxConfig/ 2>null
+	adb push .\IBoxConfig\VideoRecordConfig.txt /protect_f/IBoxConfig/ 2>null
 
 	adb shell "echo %DeviceID% > /protect_s/IBoxDeviceID.config"
 	adb shell "echo %DeviceID% > /protect_f/IBoxDeviceID.config"
