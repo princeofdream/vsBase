@@ -10,6 +10,7 @@ public:
 	bool StartCommand(char* m_cmd);
 	bool RunCmd(const CString& strCmdline);
 	CString GetOutput();
+	CString StartSingleCommand(char* m_cmd);
 
 protected:
 	

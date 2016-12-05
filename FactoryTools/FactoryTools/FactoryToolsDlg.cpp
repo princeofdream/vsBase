@@ -243,7 +243,26 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 
 void CFactoryToolsDlg::CheckAdbStat()
 {
-	m_ctrlcent.StartCommand(NULL);
+	CString get_info;
+	char m_info[1024];
+
+	get_info = m_ctrlcent.StartSingleCommand("adb");
+
+	
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+	{
+		TCHAR * m_stat_info;
+		m_stat_info = _T("Adb info");
+		pEdit->SetWindowText(get_info);
+	}
+
+	memset(m_info, 0x0, sizeof(m_info));
+	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
+	TRACE(_T(m_info));
+	TRACE(get_info);
+	memset(m_info, 0x0, sizeof(m_info));
+	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
+	TRACE(_T(m_info));
 
 	return;
 }
