@@ -81,6 +81,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDCANCEL, &CFactoryToolsDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_CHECK_ADB, &CFactoryToolsDlg::OnBnClickedCheckAdb)
+	ON_BN_CLICKED(IDC_START_BURN, &CFactoryToolsDlg::OnBnClickedStartBurn)
 END_MESSAGE_MAP()
 
 
@@ -229,15 +230,30 @@ void CFactoryToolsDlg::OnBnClickedCancel()
 void CFactoryToolsDlg::OnBnClickedCheckAdb()
 {
 	// TODO: 在此添加控件通知处理程序代码
+#if 0
 	TRACE("James's Debug....");
 	m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
 	m_adbstat.ShowWindow(TRUE);
 	UpdateData(false);
+#else
+	CheckAdbStat();
+#endif
 }
 
 
 void CFactoryToolsDlg::CheckAdbStat()
 {
+	m_ctrlcent.StartCommand(NULL);
+
 	return;
 }
 
+
+
+void CFactoryToolsDlg::OnBnClickedStartBurn()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString m_cmd = "pwd";
+	m_ctrlcent.RunCmd(m_cmd);
+	m_ctrlcent.GetOutput();
+}

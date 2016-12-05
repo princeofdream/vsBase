@@ -4,6 +4,7 @@
 
 #pragma once
 #include "AdbStat.h"
+#include "ControlCenter.h"
 
 class CFactoryToolsDlgAutoProxy;
 
@@ -46,9 +47,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	AdbStat m_adbstat;
+	ControlCenter m_ctrlcent;
 
 public:
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnBnClickedCheckAdb();
 	void CheckAdbStat();
+	afx_msg void OnBnClickedStartBurn();
 };

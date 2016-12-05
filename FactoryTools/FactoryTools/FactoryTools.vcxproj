@@ -44,7 +44,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -198,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdbStat.h" />
+    <ClInclude Include="ControlCenter.h" />
     <ClInclude Include="DlgProxy.h" />
     <ClInclude Include="FactoryTools.h" />
     <ClInclude Include="FactoryToolsDlg.h" />
@@ -207,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdbStat.cpp" />
+    <ClCompile Include="ControlCenter.cpp" />
     <ClCompile Include="DlgProxy.cpp" />
     <ClCompile Include="FactoryTools.cpp" />
     <ClCompile Include="FactoryToolsDlg.cpp" />

@@ -39,6 +39,9 @@
     <ClInclude Include="AdbStat.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ControlCenter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryTools.cpp">
@@ -54,6 +57,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AdbStat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlCenter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
