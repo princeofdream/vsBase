@@ -1,0 +1,29 @@
+// FactoryTools.idl : FactoryTools.exe 的类型库源
+
+// 此文件将由 MIDL 编译器处理以产生
+// 类型库(FactoryTools.tlb)。
+
+[ uuid(A4ADC41A-3E4B-4C9D-945E-839B2EC0267F), version(1.0) ]
+library FactoryTools
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	//  CFactoryToolsDoc 的主调度接口
+	
+	[ uuid(E62A0629-2E37-4A17-AF37-1308C57E7B20) ]
+	dispinterface IFactoryTools
+	{
+		properties:
+			
+		methods:
+	};
+
+	//  CFactoryToolsDoc 的类信息
+	
+	[ uuid(4EB704E8-412E-439F-9572-3535FB1EE89C) ]
+	coclass FactoryTools
+	{
+		[default] dispinterface IFactoryTools;
+	};
+};

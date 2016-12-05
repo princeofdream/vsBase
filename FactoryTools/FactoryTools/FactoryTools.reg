@@ -1,0 +1,17 @@
+REGEDIT
+; 此 .REG 文件可能由 SETUP 程序使用。
+;   如果 SETUP 程序不可用，则以下条目将
+;   CWinApp::RegisterShellFileTypes 和 COleObjectFactory::UpdateRegistryAll
+;   在 InitInstance 中对下列项自动进行注册。
+
+
+HKEY_CLASSES_ROOT\FactoryTools.Application = FactoryTools Application
+
+
+HKEY_CLASSES_ROOT\FactoryTools.Application\CLSID = {4EB704E8-412E-439F-9572-3535FB1EE89C}
+
+HKEY_CLASSES_ROOT\CLSID\{4EB704E8-412E-439F-9572-3535FB1EE89C} = FactoryTools Application
+HKEY_CLASSES_ROOT\CLSID\{4EB704E8-412E-439F-9572-3535FB1EE89C}\ProgId = FactoryTools.Application
+
+
+HKEY_CLASSES_ROOT\CLSID\{4EB704E8-412E-439F-9572-3535FB1EE89C}\LocalServer32 = FactoryTools.EXE
