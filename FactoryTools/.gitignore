@@ -3,3 +3,6 @@ FactoryTools.VC.db
 FactoryTools/Debug/
 FactoryTools/FactoryTools_h.h
 FactoryTools/FactoryTools_i.c
+FactoryTools.VC.VC.opendb
+.vs
+ipch

@@ -80,6 +80,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDCANCEL, &CFactoryToolsDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_CHECK_ADB, &CFactoryToolsDlg::OnBnClickedCheckAdb)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +118,14 @@ BOOL CFactoryToolsDlg::OnInitDialog()
 	ShowWindow(SW_MINIMIZE);
 
 	// TODO: 在此添加额外的初始化代码
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
+	{
+		//LPCTSTR m_stat_info="Adb stat ";
+		TCHAR * m_stat_info;
+		m_stat_info = _T("Adb info");
+		pEdit->SetWindowText((LPCTSTR)m_stat_info);
+	}
+	
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -215,3 +224,20 @@ void CFactoryToolsDlg::OnBnClickedCancel()
 	// TODO: 在此添加控件通知处理程序代码
 	CDialogEx::OnCancel();
 }
+
+
+void CFactoryToolsDlg::OnBnClickedCheckAdb()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	TRACE("James's Debug....");
+	m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
+	m_adbstat.ShowWindow(TRUE);
+	UpdateData(false);
+}
+
+
+void CFactoryToolsDlg::CheckAdbStat()
+{
+	return;
+}
+

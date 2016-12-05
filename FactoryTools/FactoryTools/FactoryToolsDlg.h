@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "AdbStat.h"
 
 class CFactoryToolsDlgAutoProxy;
 
@@ -43,6 +44,11 @@ protected:
 	virtual void OnOK();
 	virtual void OnCancel();
 	DECLARE_MESSAGE_MAP()
+
+	AdbStat m_adbstat;
+
 public:
 	afx_msg void OnBnClickedCancel();
+	afx_msg void OnBnClickedCheckAdb();
+	void CheckAdbStat();
 };
