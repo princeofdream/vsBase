@@ -79,6 +79,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDCANCEL, &CFactoryToolsDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -207,3 +208,10 @@ BOOL CFactoryToolsDlg::CanExit()
 	return TRUE;
 }
 
+
+
+void CFactoryToolsDlg::OnBnClickedCancel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogEx::OnCancel();
+}
