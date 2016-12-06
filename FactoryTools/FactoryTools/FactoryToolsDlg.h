@@ -54,4 +54,5 @@ public:
 	afx_msg void OnBnClickedCheckAdb();
 	void CheckAdbStat();
 	afx_msg void OnBnClickedStartBurn();
+	afx_msg void OnBnClickedRunCmd();
 };

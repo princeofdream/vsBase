@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &CFactoryToolsDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_CHECK_ADB, &CFactoryToolsDlg::OnBnClickedCheckAdb)
 	ON_BN_CLICKED(IDC_START_BURN, &CFactoryToolsDlg::OnBnClickedStartBurn)
+	ON_BN_CLICKED(IDC_RUN_CMD, &CFactoryToolsDlg::OnBnClickedRunCmd)
 END_MESSAGE_MAP()
 
 
@@ -119,13 +120,8 @@ BOOL CFactoryToolsDlg::OnInitDialog()
 	ShowWindow(SW_MINIMIZE);
 
 	// TODO: 在此添加额外的初始化代码
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
-	{
-		//LPCTSTR m_stat_info="Adb stat ";
-		TCHAR * m_stat_info;
-		m_stat_info = _T("Adb info");
-		pEdit->SetWindowText((LPCTSTR)m_stat_info);
-	}
+	
+	CheckAdbStat();
 	
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -243,26 +239,16 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 
 void CFactoryToolsDlg::CheckAdbStat()
 {
-	CString get_info;
-	char m_info[1024];
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
+	TCHAR * m_stat_info;
+	CString get_adb_stat;
+	get_adb_stat = m_ctrlcent.StartSingleCommand(NULL);
+	if (get_adb_stat.IsEmpty())
+		m_stat_info = _T("Check ADB Stat: Fail");
+	else
+		m_stat_info = _T("Check ADB Stat: OK");
 
-	get_info = m_ctrlcent.StartSingleCommand("adb");
-
-	
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
-	{
-		TCHAR * m_stat_info;
-		m_stat_info = _T("Adb info");
-		pEdit->SetWindowText(get_info);
-	}
-
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
-	TRACE(get_info);
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
+	pEdit->SetWindowText((LPCTSTR)m_stat_info);
 
 	return;
 }
@@ -275,4 +261,38 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	CString m_cmd = "pwd";
 	m_ctrlcent.RunCmd(m_cmd);
 	m_ctrlcent.GetOutput();
+}
+
+
+void CFactoryToolsDlg::OnBnClickedRunCmd()
+{
+	CString get_info;
+	char get_cmd[1024];
+	char get_full_cmd[1024];
+
+	memset(get_cmd, 0x0, sizeof(get_cmd));
+	memset(get_full_cmd, 0x0, sizeof(get_full_cmd));
+
+	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_cmd, sizeof(get_cmd));
+
+	if (strlen(get_cmd) == 0)
+		sprintf_s(get_full_cmd, "adb", "");
+	else if ( _stricmp(get_cmd, "devices") == 0)
+		sprintf_s(get_full_cmd, "adb devices", "");
+	else
+		sprintf_s(get_full_cmd, "adb shell \"%s\"", get_cmd);
+	TRACE(get_full_cmd);
+
+	//get_info = m_ctrlcent.StartSingleCommand("adb shell ls");
+	get_info = m_ctrlcent.StartSingleCommand(get_full_cmd);
+
+
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+	if(get_info.IsEmpty())
+		pEdit->SetWindowText("Error! Can not Find ADB. Please Check if ADB is installed!");
+	else
+		pEdit->SetWindowText(get_info);
+
+	TRACE(get_info);
+
 }
