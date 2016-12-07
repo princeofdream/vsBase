@@ -286,14 +286,12 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	m_output_msg = get_info;
 	if (get_info.Find("recovery") > 0)
 	{
-		m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
-		m_adbstat.ShowWindow(TRUE);
-		UpdateData(true);
+		m_adbstat.DoModal();
 		get_sn = m_adbstat.get_serial_number();
 	}
 	draw_runing = TRUE;
+	m_output_msg += "\r\n输入的设备号为：	";
 	m_output_msg += get_sn;
-	TRACE(_T("======================="));
 }
 
 
