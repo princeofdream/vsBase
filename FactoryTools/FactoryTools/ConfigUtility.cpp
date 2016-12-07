@@ -181,12 +181,12 @@ CString ConfigUtility::get_devices_recovery_machine_id()
 	m_pos = get_stat.Find("\n", 0);
 	m_pos_recovery = get_stat.Find("recovery", m_pos);
 
-	m_ret = get_stat.Mid(m_pos + 1, m_pos_recovery - m_pos - 1);
+	m_ret = get_stat.Mid(m_pos + 1, m_pos_recovery - m_pos - 1 + 8);
 	str_debug.Format("\n=====>%d == %d<=====", m_pos,m_pos_recovery);
 	TRACE(str_debug);
 	TRACE(m_ret);
 	
-	m_ret.TrimRight(" ");
-	m_ret.TrimRight("	");
+	//m_ret.TrimRight(" ");
+	//m_ret.TrimRight("	");
 	return m_ret;
 }

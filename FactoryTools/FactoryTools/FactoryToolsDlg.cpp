@@ -12,6 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
+static bool draw_runing = FALSE;
 
 DWORD __stdcall CFactoryToolsDlgThreadProc(void *pVoid)
 {
@@ -127,7 +128,8 @@ BOOL CFactoryToolsDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	ShowWindow(SW_MINIMIZE);
+	//ShowWindow(SW_MINIMIZE);
+	ShowWindow(SW_SHOW);
 
 	// TODO: 在此添加额外的初始化代码
 	
@@ -250,16 +252,21 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 
 void CFactoryToolsDlg::CheckAdbStat()
 {
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
+	//CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
 	TCHAR * m_stat_info;
 	CString get_adb_stat;
+
+	draw_runing = TRUE;
+	m_output_msg = "";
+
 	get_adb_stat = m_ctrlcent.StartSingleCommand("adb");
 	if (get_adb_stat.IsEmpty())
 		m_stat_info = _T("Check ADB Stat: Fail");
 	else
 		m_stat_info = _T("Check ADB Stat: OK");
 
-	pEdit->SetWindowText((LPCTSTR)m_stat_info);
+	//pEdit->SetWindowText((LPCTSTR)m_stat_info);
+	m_output_msg = _T(m_stat_info);
 
 	return;
 }
@@ -268,11 +275,25 @@ void CFactoryToolsDlg::CheckAdbStat()
 
 void CFactoryToolsDlg::OnBnClickedStartBurn()
 {
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
-	pEdit->SetWindowText("Running......");
 	CString get_info;
-	get_info = m_confutil.start_burn_local_config_to_machine();
-	pEdit->SetWindowText(get_info);
+	CString get_sn;
+
+	draw_runing = TRUE;
+	m_output_msg = "";
+	get_sn = "";
+	
+	get_info = m_confutil.check_machine_stat();
+	m_output_msg = get_info;
+	if (get_info.Find("recovery") > 0)
+	{
+		m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
+		m_adbstat.ShowWindow(TRUE);
+		UpdateData(true);
+		get_sn = m_adbstat.get_serial_number();
+	}
+	draw_runing = TRUE;
+	m_output_msg += get_sn;
+	TRACE(_T("======================="));
 }
 
 
@@ -281,13 +302,15 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	CString get_info;
 	char get_cmd[1024];
 	char get_full_cmd[1024];
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+	//CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+
+	draw_runing = TRUE;
+	m_output_msg = "";
 
 	memset(get_cmd, 0x0, sizeof(get_cmd));
 	memset(get_full_cmd, 0x0, sizeof(get_full_cmd));
 
 	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_cmd, sizeof(get_cmd));
-	pEdit->SetWindowText("Running......");
 
 	if (strlen(get_cmd) == 0)
 		sprintf_s(get_full_cmd, "adb", "");
@@ -301,10 +324,10 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	get_info = m_ctrlcent.StartSingleCommand(get_full_cmd);
 
 
-	if(get_info.IsEmpty())
-		pEdit->SetWindowText("Error! Can not Find ADB. Please Check if ADB is installed!");
+	if (get_info.IsEmpty())
+		m_output_msg = "Error! Can not Find ADB. Please Check if ADB is installed!";
 	else
-		pEdit->SetWindowText(get_info);
+		m_output_msg += get_info;
 
 	TRACE(get_info);
 
@@ -312,7 +335,21 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 
 bool CFactoryToolsDlg::Loop()
 {
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
 	TRACE(_T(" Debug by JamesL "));
+#if 1
+	while (TRUE)
+	{
+		if (draw_runing)
+		{
+			draw_runing = FALSE;
+			if (m_output_msg.IsEmpty())
+				m_output_msg = "Running......\n";
+		}
+		pEdit->SetWindowText(m_output_msg);
+		Sleep(1000);
+	}
+#endif
 	return TRUE;
 }
 

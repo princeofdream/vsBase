@@ -51,6 +51,7 @@ protected:
 	ControlCenter m_ctrlcent;
 	ConfigUtility m_confutil;
 	HANDLE  hThread;
+	CString m_output_msg;
 
 public:
 	afx_msg void OnBnClickedCancel();
