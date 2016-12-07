@@ -13,6 +13,16 @@
 #endif
 
 
+DWORD __stdcall CFactoryToolsDlgThreadProc(void *pVoid)
+{
+	if (pVoid != NULL) {
+		CFactoryToolsDlg *pShell = (CFactoryToolsDlg *)pVoid;
+		pShell->Loop();
+	}
+	return 0;
+}
+
+
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -121,8 +131,9 @@ BOOL CFactoryToolsDlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 	
-	CheckAdbStat();
-	
+	//CheckAdbStat();
+	DWORD dwThread = FALSE;
+	hThread = CreateThread(NULL, 0, CFactoryToolsDlgThreadProc, this, 0, &dwThread);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -242,7 +253,7 @@ void CFactoryToolsDlg::CheckAdbStat()
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
 	TCHAR * m_stat_info;
 	CString get_adb_stat;
-	get_adb_stat = m_ctrlcent.StartSingleCommand(NULL);
+	get_adb_stat = m_ctrlcent.StartSingleCommand("adb");
 	if (get_adb_stat.IsEmpty())
 		m_stat_info = _T("Check ADB Stat: Fail");
 	else
@@ -257,10 +268,11 @@ void CFactoryToolsDlg::CheckAdbStat()
 
 void CFactoryToolsDlg::OnBnClickedStartBurn()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	CString m_cmd = "pwd";
-	m_ctrlcent.RunCmd(m_cmd);
-	m_ctrlcent.GetOutput();
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+	pEdit->SetWindowText("Running......");
+	CString get_info;
+	get_info = m_confutil.start_burn_local_config_to_machine();
+	pEdit->SetWindowText(get_info);
 }
 
 
@@ -269,11 +281,13 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	CString get_info;
 	char get_cmd[1024];
 	char get_full_cmd[1024];
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
 
 	memset(get_cmd, 0x0, sizeof(get_cmd));
 	memset(get_full_cmd, 0x0, sizeof(get_full_cmd));
 
 	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_cmd, sizeof(get_cmd));
+	pEdit->SetWindowText("Running......");
 
 	if (strlen(get_cmd) == 0)
 		sprintf_s(get_full_cmd, "adb", "");
@@ -287,7 +301,6 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	get_info = m_ctrlcent.StartSingleCommand(get_full_cmd);
 
 
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
 	if(get_info.IsEmpty())
 		pEdit->SetWindowText("Error! Can not Find ADB. Please Check if ADB is installed!");
 	else
@@ -296,3 +309,11 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	TRACE(get_info);
 
 }
+
+bool CFactoryToolsDlg::Loop()
+{
+	TRACE(_T(" Debug by JamesL "));
+	return TRUE;
+}
+
+

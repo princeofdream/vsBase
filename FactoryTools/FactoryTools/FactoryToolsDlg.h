@@ -5,6 +5,7 @@
 #pragma once
 #include "AdbStat.h"
 #include "ControlCenter.h"
+#include "ConfigUtility.h"
 
 class CFactoryToolsDlgAutoProxy;
 
@@ -48,6 +49,8 @@ protected:
 
 	AdbStat m_adbstat;
 	ControlCenter m_ctrlcent;
+	ConfigUtility m_confutil;
+	HANDLE  hThread;
 
 public:
 	afx_msg void OnBnClickedCancel();
@@ -55,4 +58,5 @@ public:
 	void CheckAdbStat();
 	afx_msg void OnBnClickedStartBurn();
 	afx_msg void OnBnClickedRunCmd();
+	bool Loop();
 };

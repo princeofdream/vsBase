@@ -160,15 +160,7 @@ bool ControlCenter::RunCmd(const CString& strCmdline)
 
 CString ControlCenter::GetOutput()
 {
-	//WaitForSingleObject(hThread, INFINITE);
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
 	TRACE(m_strOutput);
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
-
 	return m_strOutput;
 }
 
@@ -246,13 +238,8 @@ CString ControlCenter::StartSingleCommand(char* m_cmd)
 	CloseHandle(hThread);
 	hThread = NULL;
 
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
 	TRACE(m_strOutput);
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
+
 
 	return m_strOutput;
 }

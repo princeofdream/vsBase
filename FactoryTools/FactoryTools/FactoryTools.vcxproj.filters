@@ -42,6 +42,9 @@
     <ClInclude Include="ControlCenter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ConfigUtility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryTools.cpp">
@@ -60,6 +63,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ControlCenter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigUtility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
