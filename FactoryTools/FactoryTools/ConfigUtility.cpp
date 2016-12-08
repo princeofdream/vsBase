@@ -24,6 +24,8 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 {
 	CString get_info;
 	CString m_ret;
+	CString get_write_sn_stat;
+	CString get_write_conf_stat;
 	bool get_mount_stat;
 
 
@@ -37,7 +39,8 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 		m_ret = "错误：无法正常挂载保护分区。";
 		return m_ret;
 	}
-	
+	get_write_sn_stat = write_serial_number_to_machine(m_sn);
+	get_write_conf_stat = write_config_files_to_machine();
 	m_ret = m_sn;
 
 	return m_ret;
@@ -65,7 +68,21 @@ CString ConfigUtility::check_machine_config_md5(CString m_protect)
 
 CString ConfigUtility::check_machine_serialnumber()
 {
-	return NULL;
+	CString get_info_s, get_info_f;
+	CString m_ret;
+	get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+	get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+	get_info_s.TrimRight(" ");
+	get_info_f.TrimRight(" ");
+	if (get_info_s.Compare(get_info_f) != 0)
+	{
+		m_ret = "\r\nprotect_s：" + get_info_s;
+		m_ret += "\r\nprotect_f：" + get_info_f;
+		m_ret += "\r\n保护分区设备 ID 不一致!!";
+	}
+	else
+		m_ret = get_info_s;
+	return m_ret;
 }
 
 CString ConfigUtility::check_machine_stat()
@@ -336,8 +353,8 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	CString m_ret;
 	bool get_check_md5_stat;
 	bool get_check_sn_stat;
-	CString get_info_s;
-	CString get_info_f;
+	CString get_sn;
+	CString get_md5;
 
 	get_check_md5_stat = compare_md5_sum();
 	if (!get_check_md5_stat)
@@ -350,18 +367,13 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 
 	if (m_sn.CompareNoCase("CheckOnly") == 0)
 	{
-		get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
-		get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
-		get_info_s.TrimRight(" ");
-		get_info_f.TrimRight(" ");
-		if (get_info_s.Compare(get_info_f) != 0)
-		{
-			m_ret += "保护分区设备 ID 不一致";
-			m_ret += "\r\nprotect_s："+ get_info_s;
-			m_ret += "\r\nprotect_f："+ get_info_f;
-		}
-		else
-			m_ret += "IBox设备ID：\t\t\t" + get_info_s;
+		get_sn = check_machine_serialnumber();
+		m_ret += "IBox设备ID：\t\t\t" + get_sn;
+
+		get_md5 = check_local_config_md5();
+		get_md5.Replace("\n", "\r\n");
+		get_md5.Replace(" ", "\t");
+		m_ret += "\r\nIBox配置文件MD5码值：\r\n" + get_md5;
 
 		return m_ret;
 	}
@@ -376,6 +388,47 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 		m_ret += "IBox设备ID：" + m_sn;
 	}
 
+
+
 	return m_ret;
+}
+
+
+
+CString ConfigUtility::write_serial_number_to_machine(CString m_sn)
+{
+	char m_cmd[1024];
+
+	memset(m_cmd, 0x0, sizeof(m_cmd));
+	sprintf_s(m_cmd, "adb shell \"echo %s > /protect_s/IBoxDeviceID.config\"", m_sn);
+	m_ctrlcent.StartSingleCommand(m_cmd);
+
+	memset(m_cmd, 0x0, sizeof(m_cmd));
+	sprintf_s(m_cmd, "adb shell \"echo %s > /protect_f/IBoxDeviceID.config\"", m_sn);
+	m_ctrlcent.StartSingleCommand(m_cmd);
+
+	m_ctrlcent.StartSingleCommand("adb shell sync");
+	return "";
+}
+CString ConfigUtility::write_config_files_to_machine()
+{
+	m_ctrlcent.StartSingleCommand("adb shell \"rm -rf /protect_f/IBoxConfig/ /protect_s/IBoxConfig/ \"");
+	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_s/IBoxConfig/\"");
+	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_f/IBoxConfig/\"");
+
+	//m_ctrlcent.StartSingleCommand("adb push FactoryTools.cpp /protect_s/IBoxConfig/");
+
+	/*m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\VideoRecordConfig.txt /protect_s/IBoxConfig/ ");
+
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\CaptureConfig.txt /protect_f/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\FolderConfig.txt /protect_f/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\RTSPConfig.txt /protect_f/IBoxConfig/ ");
+	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/ ");
+*/
+	m_ctrlcent.StartSingleCommand("adb shell sync");
+	return "";
 }
 

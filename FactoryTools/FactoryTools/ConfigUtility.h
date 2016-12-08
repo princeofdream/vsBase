@@ -22,6 +22,8 @@ public:
 	bool compare_md5_sum();
 	bool compare_serail_number(CString m_sn);
 	CString check_burned_data(CString m_sn);
+	CString write_serial_number_to_machine(CString m_sn);
+	CString write_config_files_to_machine();
 
 protected:
 	ControlCenter m_ctrlcent;

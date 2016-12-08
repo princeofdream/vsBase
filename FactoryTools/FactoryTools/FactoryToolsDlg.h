@@ -52,6 +52,7 @@ protected:
 	ConfigUtility m_confutil;
 	HANDLE  hThread;
 	CString m_output_msg;
+	CString m_tmp;
 
 public:
 	afx_msg void OnBnClickedCancel();
