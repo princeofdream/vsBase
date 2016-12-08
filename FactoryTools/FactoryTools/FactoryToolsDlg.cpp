@@ -94,6 +94,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_ADB, &CFactoryToolsDlg::OnBnClickedCheckAdb)
 	ON_BN_CLICKED(IDC_START_BURN, &CFactoryToolsDlg::OnBnClickedStartBurn)
 	ON_BN_CLICKED(IDC_RUN_CMD, &CFactoryToolsDlg::OnBnClickedRunCmd)
+	ON_BN_CLICKED(IDC_RECHECK_STAT, &CFactoryToolsDlg::OnBnClickedRecheckStat)
 END_MESSAGE_MAP()
 
 
@@ -277,21 +278,39 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 {
 	CString get_info;
 	CString get_sn;
+	CString get_burn_stat;
 
 	draw_runing = TRUE;
 	m_output_msg = "";
 	get_sn = "";
 	
+	m_adbstat.set_serial_number_empty();
 	get_info = m_confutil.check_machine_stat();
 	m_output_msg = get_info;
-	if (get_info.Find("recovery") > 0)
+	
+	if (get_info.Find("recovery") < 0)
 	{
-		m_adbstat.DoModal();
-		get_sn = m_adbstat.get_serial_number();
+		m_output_msg = get_info;
+		return;
 	}
-	draw_runing = TRUE;
+
+	/*new a dialog to get input serial number*/
+	m_adbstat.DoModal();
+	get_sn = m_adbstat.get_serial_number();
+	
+	if (get_sn.IsEmpty())
+	{
+		m_output_msg += "\r\nÃ»ÓÐÊäÈëÉè±¸ºÅ£¬Í£Ö¹ÉÕÂ¼£¡";
+		return;
+	}
 	m_output_msg += "\r\nÊäÈëµÄÉè±¸ºÅÎª£º	";
 	m_output_msg += get_sn;
+
+	get_burn_stat = m_confutil.start_burn_local_config_to_machine(get_sn);
+	m_output_msg += "\r\nÉÕÂ¼×´Ì¬£º";
+	m_output_msg += get_burn_stat;
+
+	return;
 }
 
 
@@ -352,3 +371,30 @@ bool CFactoryToolsDlg::Loop()
 }
 
 
+
+
+void CFactoryToolsDlg::OnBnClickedRecheckStat()
+{
+	CString get_info;
+	CString get_sn;
+	CString get_burn_stat;
+
+	draw_runing = TRUE;
+	m_output_msg = "";
+	get_sn = "";
+
+	get_info = m_confutil.check_machine_stat();
+	m_output_msg = get_info;
+
+	if (get_info.Find("recovery") < 0)
+	{
+		m_output_msg = get_info;
+		return;
+	}
+
+	get_burn_stat = m_confutil.check_burned_data("CheckOnly");
+	m_output_msg += "\r\nÉÕÂ¼×´Ì¬£º\r\n";
+	m_output_msg += get_burn_stat;
+
+	return;
+}

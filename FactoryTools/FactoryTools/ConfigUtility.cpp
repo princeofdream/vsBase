@@ -20,24 +20,47 @@ bool ConfigUtility::check_machine_config_stat()
 	return TRUE;
 }
 
-CString ConfigUtility::start_burn_local_config_to_machine()
+CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 {
 	CString get_info;
 	CString m_ret;
-	get_info = check_machine_stat();
+	bool get_mount_stat;
 
-	m_ret = get_info;
+
+	CString get_local_md5;
+	CString get_machine_md5;
+	
+	/*check protect partition mount stat*/
+	get_mount_stat = check_machine_mount_stat();
+	if (!get_mount_stat)
+	{
+		m_ret = "错误：无法正常挂载保护分区。";
+		return m_ret;
+	}
+	
+	m_ret = m_sn;
+
 	return m_ret;
 }
 
-bool ConfigUtility::check_local_config_md5()
+CString ConfigUtility::check_local_config_md5()
 {
-	return TRUE;
+	CString get_info;
+	get_info = m_ctrlcent.StartSingleCommand("md5sum IBoxConfig/*");
+	return get_info;
 }
 
-bool ConfigUtility::check_machine_config_md5()
+CString ConfigUtility::check_machine_config_md5(CString m_protect)
 {
-	return TRUE;
+	CString get_info;
+
+	if (m_protect.CompareNoCase("protect_s") == 0)
+		get_info = m_ctrlcent.StartSingleCommand("adb shell busybox md5sum \/protect_s\/IBoxConfig\/*");
+	else if (m_protect.CompareNoCase("protect_f") == 0)
+		get_info = m_ctrlcent.StartSingleCommand("adb shell busybox md5sum \/protect_f\/IBoxConfig\/*");
+	else
+		get_info = "Get md5 Fail!";
+	return get_info;
 }
 
 CString ConfigUtility::check_machine_serialnumber()
@@ -190,3 +213,169 @@ CString ConfigUtility::get_devices_recovery_machine_id()
 	//m_ret.TrimRight("	");
 	return m_ret;
 }
+
+
+
+bool ConfigUtility::check_machine_mount_stat()
+{
+	CString get_stat;
+	int m_pos_s,m_pos_f;
+
+	get_stat = m_ctrlcent.StartSingleCommand("adb shell mount");
+	m_pos_s = get_stat.Find("protect_s", 0);
+	m_pos_f = get_stat.Find("protect_f", 0);
+
+	if (m_pos_s > 0 && m_pos_f > 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+
+bool ConfigUtility::compare_md5_sum()
+{
+	CString get_local_md5;
+	CString get_machine_md5_s;
+	CString get_machine_md5_f;
+	CString get_single_md5;
+	int m_pos_start, m_pos_end;
+	CString get_single_md5_tmp;
+
+	CString debug_str;
+
+	get_local_md5 = check_local_config_md5();
+	get_machine_md5_s = check_machine_config_md5("protect_s");
+	get_machine_md5_s = check_machine_config_md5("protect_f");
+
+	m_pos_start = 0;
+	m_pos_end = 0;
+	for (int i0 = 0; i0 < 10; i0++)
+	{
+		if (m_pos_start < 0 || m_pos_end < 0)
+			break;
+
+		if (m_pos_start == 0 && m_pos_end == 0)
+		{
+			m_pos_end = get_local_md5.Find(" ", m_pos_start);
+			get_single_md5_tmp = get_local_md5.Mid(m_pos_start, m_pos_end - m_pos_start);
+
+			debug_str.Format("--s->%d<-e->%d<---delta->%d<--", m_pos_start, m_pos_end, m_pos_end - m_pos_start);
+			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
+		}
+		else
+		{
+
+			m_pos_start = get_local_md5.Find("\n", m_pos_end);
+			m_pos_end = get_local_md5.Find(" ", m_pos_start);
+			//if (m_pos_start < 0 || m_pos_end < 0)
+			//	break;
+			get_single_md5_tmp = get_local_md5.Mid(m_pos_start + 1, m_pos_end - m_pos_start);
+
+			debug_str.Format("--s->%d<-e->%d<---delta->%d<--", m_pos_start, m_pos_end, m_pos_end - m_pos_start);
+			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
+		}
+		get_single_md5_tmp.TrimRight(" ");
+		get_single_md5_tmp.TrimRight("	");
+		get_single_md5_tmp.TrimLeft("\n");
+		get_single_md5 = "";
+		if (get_single_md5_tmp.GetLength() == 32)
+		{
+			get_single_md5 = get_single_md5_tmp;
+		}
+		TRACE("\n--->" + get_single_md5 + "<----");
+
+
+		if (get_single_md5.GetLength() == 0)
+		{
+			break;
+		}
+
+		if (get_machine_md5_s.Find(get_single_md5, 0) < 0)
+		{
+			return FALSE;
+		}
+		if (get_machine_md5_s.Find(get_single_md5, 0) < 0)
+		{
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
+
+bool ConfigUtility::compare_serail_number(CString m_sn)
+{
+	CString get_info_s;
+	CString get_info_f;
+
+	get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+	get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+
+	get_info_s.TrimRight(" ");
+	get_info_f.TrimRight(" ");
+	m_sn.TrimRight(" ");
+	
+	TRACE("---s--->"+ get_info_s + "<---f--->"+ get_info_f + "<---get--->" + m_sn + "<---");
+	if (get_info_s.Compare(get_info_f) != 0)
+	{
+		return FALSE;
+	}
+	if (get_info_s.Compare(m_sn) != 0)
+	{
+		return FALSE;
+	}
+	return TRUE;
+	
+}
+
+CString ConfigUtility::check_burned_data(CString m_sn)
+{
+	CString m_ret;
+	bool get_check_md5_stat;
+	bool get_check_sn_stat;
+	CString get_info_s;
+	CString get_info_f;
+
+	get_check_md5_stat = compare_md5_sum();
+	if (!get_check_md5_stat)
+	{
+		m_ret = "检查配置文件MD5码出错！";
+		return m_ret;
+	}
+
+	m_ret = "配置文件MD5校验：\t\tOK！\r\n";
+
+	if (m_sn.CompareNoCase("CheckOnly") == 0)
+	{
+		get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+		get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
+		get_info_s.TrimRight(" ");
+		get_info_f.TrimRight(" ");
+		if (get_info_s.Compare(get_info_f) != 0)
+		{
+			m_ret += "保护分区设备 ID 不一致";
+			m_ret += "\r\nprotect_s："+ get_info_s;
+			m_ret += "\r\nprotect_f："+ get_info_f;
+		}
+		else
+			m_ret += "IBox设备ID：\t\t\t" + get_info_s;
+
+		return m_ret;
+	}
+	else
+	{
+		get_check_sn_stat = compare_serail_number(m_sn);
+		if (!get_check_md5_stat)
+		{
+			m_ret += "检查设备 ID 出错！";
+			return m_ret;
+		}
+		m_ret += "IBox设备ID：" + m_sn;
+	}
+
+	return m_ret;
+}
+

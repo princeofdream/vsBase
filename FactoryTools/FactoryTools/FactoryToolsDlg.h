@@ -60,4 +60,5 @@ public:
 	afx_msg void OnBnClickedStartBurn();
 	afx_msg void OnBnClickedRunCmd();
 	bool Loop();
+	afx_msg void OnBnClickedRecheckStat();
 };

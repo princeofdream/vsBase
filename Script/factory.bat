@@ -93,7 +93,7 @@ REM      adb shell "mount -o remount,rw /protect_s"
 	ECHO "Your ID is :"
 	adb shell "cat /protect_s/IBoxDeviceID.config"
 	ECHO "================================================================="
-	set /p check_device_id="Check Your Device ID, Does it right?(Y/N) "
+	set /p check_device_id="Check Your Device ID, Does it correct?(Y/N) "
 	ECHO "you Device ID is '%check_device_id%' !!"
 	if %check_device_id%==Y GOTO CHECK_OK
 	if %check_device_id%==y GOTO CHECK_OK
