@@ -288,11 +288,13 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	get_info = m_confutil.check_machine_stat();
 	m_output_msg = get_info;
 	
+#if 1 //JamesL
 	if (get_info.Find("recovery") < 0)
 	{
 		m_output_msg = get_info;
 		return;
 	}
+#endif
 
 	/*new a dialog to get input serial number*/
 	m_adbstat.DoModal();
