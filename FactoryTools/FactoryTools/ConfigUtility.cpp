@@ -44,9 +44,11 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 	get_write_sn_stat = write_serial_number_to_machine(m_sn);
 	get_write_conf_stat = write_config_files_to_machine();
 	m_ret = m_sn;
-	if (get_write_conf_stat.Compare("OK") == 0)
+	if (get_write_conf_stat.Compare(_T("OK")) == 0)
 	{
-		m_ret += "\r\n" + get_write_conf_stat + "\r\n";
+		m_ret += "\r\n";
+		m_ret += get_write_conf_stat;
+		m_ret += "\r\n";
 		get_burned_data = check_burned_data(m_sn);
 		m_ret += get_burned_data;
 	}
@@ -65,9 +67,9 @@ CString ConfigUtility::check_machine_config_md5(CString m_protect)
 {
 	CString get_info;
 
-	if (m_protect.CompareNoCase("protect_s") == 0)
+	if (m_protect.CompareNoCase(_T("protect_s")) == 0)
 		get_info = m_ctrlcent.StartSingleCommand("adb shell busybox md5sum \/protect_s\/IBoxConfig\/*");
-	else if (m_protect.CompareNoCase("protect_f") == 0)
+	else if (m_protect.CompareNoCase(_T("protect_f")) == 0)
 		get_info = m_ctrlcent.StartSingleCommand("adb shell busybox md5sum \/protect_f\/IBoxConfig\/*");
 	else
 		get_info = "Get md5 Fail!";
@@ -80,12 +82,14 @@ CString ConfigUtility::check_machine_serialnumber()
 	CString m_ret;
 	get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
 	get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
-	get_info_s.TrimRight(" ");
-	get_info_f.TrimRight(" ");
+	get_info_s.TrimRight(_T(" "));
+	get_info_f.TrimRight(_T(" "));
 	if (get_info_s.Compare(get_info_f) != 0)
 	{
-		m_ret = "\r\nprotect_s：" + get_info_s;
-		m_ret += "\r\nprotect_f：" + get_info_f;
+		m_ret = "\r\nprotect_s：";
+		m_ret += get_info_s;
+		m_ret += "\r\nprotect_f：";
+		m_ret += get_info_f;
 		m_ret += "\r\n保护分区设备 ID 不一致!!";
 	}
 	else
@@ -101,12 +105,12 @@ CString ConfigUtility::check_machine_stat()
 	for (int i0 = 0; i0 <= 3; i0++)
 	{
 		get_stat = check_devices_recovery_online();
-		if (get_stat.CompareNoCase("OK") == 0)
+		if (get_stat.CompareNoCase(_T("OK")) == 0)
 		{
 			m_ret = get_devices_recovery_machine_id();
 			break;
 		}
-		else if (get_stat.CompareNoCase("HOST") == 0)
+		else if (get_stat.CompareNoCase(_T("HOST")) == 0)
 		{
 			m_ctrlcent.StartSingleCommand("adb kill-server");
 			continue;
@@ -144,21 +148,21 @@ CString ConfigUtility::check_devices_recovery_online()
 	m_pos = 0;
 	for (int i0 = 0; i0 < 5; i0++)
 	{
-		m_pos = get_stat.Find("recovery", m_pos + 1);
+		m_pos = get_stat.Find(_T("recovery"), m_pos + 1);
 		if (m_pos < 0)
 			break;
 		++m_count_recovery;
-		str_debug.Format("\n=====>%d == %d<=====", m_pos, m_count_recovery);
+		str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_count_recovery);
 		TRACE(str_debug);
 	}
 	m_pos = 0;
 	for (int i0 = 0; i0 < 5; i0++)
 	{
-		m_pos = get_stat.Find("device", m_pos + 1);
+		m_pos = get_stat.Find(_T("device"), m_pos + 1);
 		if (m_pos < 0)
 			break;
 		++m_count_devices;
-		str_debug.Format("\n=====>%d == %d<=====", m_pos, m_count_devices);
+		str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_count_devices);
 		TRACE(str_debug);
 	}
 	--m_count_devices;/*Because we have one more key word.*/
@@ -166,11 +170,11 @@ CString ConfigUtility::check_devices_recovery_online()
 	m_pos = 0;
 	for (int i0 = 0; i0 < 5; i0++)
 	{
-		m_pos = get_stat.Find("host", m_pos + 1);
+		m_pos = get_stat.Find(_T("host"), m_pos + 1);
 		if (m_pos < 0)
 			break;
 		++m_count_host;
-		str_debug.Format("\n=====>%d == %d<=====", m_pos, m_count_host);
+		str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_count_host);
 		TRACE(str_debug);
 	}
 
@@ -226,11 +230,11 @@ CString ConfigUtility::get_devices_recovery_machine_id()
 	*/
 	get_stat = m_ctrlcent.StartSingleCommand("adb devices");
 
-	m_pos = get_stat.Find("\n", 0);
-	m_pos_recovery = get_stat.Find("recovery", m_pos);
+	m_pos = get_stat.Find(_T("\n"), 0);
+	m_pos_recovery = get_stat.Find(_T("recovery"), m_pos);
 
 	m_ret = get_stat.Mid(m_pos + 1, m_pos_recovery - m_pos - 1 + 8);
-	str_debug.Format("\n=====>%d == %d<=====", m_pos,m_pos_recovery);
+	str_debug.Format(_T("\n=====>%d == %d<====="), m_pos,m_pos_recovery);
 	TRACE(str_debug);
 	TRACE(m_ret);
 	
@@ -247,8 +251,8 @@ bool ConfigUtility::check_machine_mount_stat()
 	int m_pos_s,m_pos_f;
 
 	get_stat = m_ctrlcent.StartSingleCommand("adb shell mount");
-	m_pos_s = get_stat.Find("protect_s", 0);
-	m_pos_f = get_stat.Find("protect_f", 0);
+	m_pos_s = get_stat.Find(_T("protect_s"), 0);
+	m_pos_f = get_stat.Find(_T("protect_f"), 0);
 
 	if (m_pos_s > 0 && m_pos_f > 0)
 	{
@@ -271,8 +275,8 @@ bool ConfigUtility::compare_md5_sum()
 	CString debug_str;
 
 	get_local_md5 = check_local_config_md5();
-	get_machine_md5_s = check_machine_config_md5("protect_s");
-	get_machine_md5_s = check_machine_config_md5("protect_f");
+	get_machine_md5_s = check_machine_config_md5(_T("protect_s"));
+	get_machine_md5_s = check_machine_config_md5(_T("protect_f"));
 
 	m_pos_start = 0;
 	m_pos_end = 0;
@@ -283,33 +287,33 @@ bool ConfigUtility::compare_md5_sum()
 
 		if (m_pos_start == 0 && m_pos_end == 0)
 		{
-			m_pos_end = get_local_md5.Find(" ", m_pos_start);
+			m_pos_end = get_local_md5.Find(_T(" "), m_pos_start);
 			get_single_md5_tmp = get_local_md5.Mid(m_pos_start, m_pos_end - m_pos_start);
 
-			debug_str.Format("--s->%d<-e->%d<---delta->%d<--", m_pos_start, m_pos_end, m_pos_end - m_pos_start);
+			debug_str.Format(_T("--s->%d<-e->%d<---delta->%d<--"), m_pos_start, m_pos_end, m_pos_end - m_pos_start);
 			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
 		}
 		else
 		{
 
-			m_pos_start = get_local_md5.Find("\n", m_pos_end);
-			m_pos_end = get_local_md5.Find(" ", m_pos_start);
+			m_pos_start = get_local_md5.Find(_T("\n"), m_pos_end);
+			m_pos_end = get_local_md5.Find(_T(" "), m_pos_start);
 			//if (m_pos_start < 0 || m_pos_end < 0)
 			//	break;
 			get_single_md5_tmp = get_local_md5.Mid(m_pos_start + 1, m_pos_end - m_pos_start);
 
-			debug_str.Format("--s->%d<-e->%d<---delta->%d<--", m_pos_start, m_pos_end, m_pos_end - m_pos_start);
+			debug_str.Format(_T("--s->%d<-e->%d<---delta->%d<--"), m_pos_start, m_pos_end, m_pos_end - m_pos_start);
 			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
 		}
-		get_single_md5_tmp.TrimRight(" ");
-		get_single_md5_tmp.TrimRight("	");
-		get_single_md5_tmp.TrimLeft("\n");
+		get_single_md5_tmp.TrimRight(_T(" "));
+		get_single_md5_tmp.TrimRight(_T("	"));
+		get_single_md5_tmp.TrimLeft(_T("\n"));
 		get_single_md5 = "";
 		if (get_single_md5_tmp.GetLength() == 32)
 		{
 			get_single_md5 = get_single_md5_tmp;
 		}
-		TRACE("\n--->" + get_single_md5 + "<----");
+		TRACE(get_single_md5);
 
 
 		if (get_single_md5.GetLength() == 0)
@@ -339,11 +343,11 @@ bool ConfigUtility::compare_serail_number(CString m_sn)
 	get_info_s = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
 	get_info_f = m_ctrlcent.StartSingleCommand("adb shell cat \/protect_s\/IBoxDeviceID.config");
 
-	get_info_s.TrimRight(" ");
-	get_info_f.TrimRight(" ");
-	m_sn.TrimRight(" ");
+	get_info_s.TrimRight(_T(" "));
+	get_info_f.TrimRight(_T(" "));
+	m_sn.TrimRight(_T(" "));
 	
-	TRACE("---s--->"+ get_info_s + "<---f--->"+ get_info_f + "<---get--->" + m_sn + "<---");
+	//TRACE("---s--->"+ get_info_s + "<---f--->"+ get_info_f + "<---get--->" + m_sn + "<---");
 	if (get_info_s.Compare(get_info_f) != 0)
 	{
 		return FALSE;
@@ -367,8 +371,8 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	get_check_md5_stat = compare_md5_sum();
 
 	get_md5 = check_local_config_md5();
-	get_md5.Replace("\n", "\r\n");
-	get_md5.Replace(" ", "\t");
+	get_md5.Replace(_T("\n"), _T("\r\n"));
+	get_md5.Replace(_T(" "), _T("\t"));
 
 	if (!get_check_md5_stat)
 	{
@@ -378,12 +382,14 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 
 	m_ret = "配置文件MD5校验：\t\tOK！\r\n";
 
-	if (m_sn.CompareNoCase("CheckOnly") == 0)
+	if (m_sn.CompareNoCase(_T("CheckOnly")) == 0)
 	{
 		get_sn = check_machine_serialnumber();
-		m_ret += "IBox设备ID：\t\t\t" + get_sn;
+		m_ret += "IBox设备ID：\t\t\t";
+		m_ret += get_sn;
 
-		m_ret += "\r\nIBox配置文件MD5码值：\r\n" + get_md5;
+		m_ret += "\r\nIBox配置文件MD5码值：\r\n";
+		m_ret += get_md5;
 
 		return m_ret;
 	}
@@ -395,8 +401,10 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 			m_ret += "检查设备 ID 出错！";
 			return m_ret;
 		}
-		m_ret += "IBox设备ID：" + m_sn;
-		m_ret += "\r\nIBox配置文件MD5码值：\r\n" + get_md5;
+		m_ret += "IBox设备ID：";
+		m_ret += m_sn;
+		m_ret += "\r\nIBox配置文件MD5码值：\r\n";
+		m_ret += get_md5;
 	}
 
 
@@ -419,7 +427,7 @@ CString ConfigUtility::write_serial_number_to_machine(CString m_sn)
 	m_ctrlcent.StartSingleCommand(m_cmd);
 
 	m_ctrlcent.StartSingleCommand("adb shell sync");
-	return "";
+	return NULL;
 }
 CString ConfigUtility::write_config_files_to_machine()
 {
@@ -441,24 +449,20 @@ CString ConfigUtility::write_config_files_to_machine()
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_s/IBoxConfig/\"");
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_f/IBoxConfig/\"");
 
-	if (CreateProcess(NULL, "adb push FactoryTools.cpp /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == FALSE)
-	{
-		return FALSE;
-	}
 
-	CreateProcess(NULL, "adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\VideoRecordConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\VideoRecordConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 	
 	
 
-	CreateProcess(NULL, "adb push IBoxConfig\\CaptureConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\FolderConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\RTSPConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-	CreateProcess(NULL, "adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\CaptureConfig.txt /protect_f/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\FolderConfig.txt /protect_f/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\RTSPConfig.txt /protect_f/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, _T("adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
 	m_ctrlcent.StartSingleCommand("adb shell sync");
-	return "OK";
+	return _T("OK");
 }
 
