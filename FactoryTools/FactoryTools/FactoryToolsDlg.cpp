@@ -319,7 +319,7 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 void CFactoryToolsDlg::OnBnClickedRunCmd()
 {
 	CString get_info;
-	char *get_cmd;
+	char get_cmd[1024];
 	char get_full_cmd[1024];
 	//CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
 	TCHAR get_win_cmd[1024];
@@ -327,11 +327,16 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	draw_runing = TRUE;
 	m_output_msg = "";
 
-	//memset(get_cmd, 0x0, sizeof(get_cmd));
+	memset(get_cmd, 0x0, sizeof(get_cmd));
 	memset(get_full_cmd, 0x0, sizeof(get_full_cmd));
 
 	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_win_cmd, sizeof(get_win_cmd));
-	get_cmd = m_ctrlcent.ConvertLPWSTRToLPSTR(get_win_cmd);
+#ifdef UNICODE  
+	//MultiByteToWideChar(CP_ACP, 0, m_cmd, -1, command, sizeof(command));
+	WideCharToMultiByte(CP_ACP, 0, get_cmd, -1, get_win_cmd, sizeof(get_win_cmd));
+#else
+	strcpy_s(get_cmd, get_win_cmd);
+#endif
 
 
 	if (strlen(get_cmd) == 0)

@@ -366,17 +366,35 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	bool get_check_md5_stat;
 	bool get_check_sn_stat;
 	CString get_sn;
-	CString get_md5;
+	CString get_local_md5;
+	CString get_machine_md5_s, get_machine_md5_f;
 
 	get_check_md5_stat = compare_md5_sum();
 
-	get_md5 = check_local_config_md5();
-	get_md5.Replace(_T("\n"), _T("\r\n"));
-	get_md5.Replace(_T(" "), _T("\t"));
+	get_local_md5 = check_local_config_md5();
+	get_machine_md5_s = check_machine_config_md5(_T("protect_s"));
+	get_machine_md5_f = check_machine_config_md5(_T("protect_f"));
+
+	get_local_md5.Replace(_T("\n"), _T("\r\n"));
+	get_local_md5.Replace(_T(" "), _T("\t"));
+
+	get_machine_md5_s.Replace(_T("\n"), _T("\r\n"));
+	get_machine_md5_s.Replace(_T(" "), _T("\t"));
+
+	get_machine_md5_f.Replace(_T("\n"), _T("\r\n"));
+	get_machine_md5_f.Replace(_T(" "), _T("\t"));
 
 	if (!get_check_md5_stat)
 	{
 		m_ret = "检查配置文件MD5码出错！";
+		m_ret += "\r\nIBox配置文件MD5码值：\r\n";
+		m_ret += get_local_md5;
+		m_ret += "\r\n==============>>s\r\n";
+		m_ret += get_machine_md5_s;
+		m_ret += "\r\n==============>>f\r\n";
+		m_ret += get_machine_md5_f;
+
+
 		return m_ret;
 	}
 
@@ -389,7 +407,7 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 		m_ret += get_sn;
 
 		m_ret += "\r\nIBox配置文件MD5码值：\r\n";
-		m_ret += get_md5;
+		m_ret += get_local_md5;
 
 		return m_ret;
 	}
@@ -404,7 +422,7 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 		m_ret += "IBox设备ID：";
 		m_ret += m_sn;
 		m_ret += "\r\nIBox配置文件MD5码值：\r\n";
-		m_ret += get_md5;
+		m_ret += get_local_md5;
 	}
 
 
