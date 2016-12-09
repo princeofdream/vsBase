@@ -12,6 +12,8 @@ public:
 	CString GetOutput();
 	CString StartSingleCommand(char* m_cmd);
 
+	char* ConvertLPWSTRToLPSTR(LPWSTR lpwszStrIn);
+
 protected:
 	
 	
@@ -27,6 +29,5 @@ private:
 	HANDLE  m_hReadPipe2;
 	HANDLE  m_hWritePipe;
 	HANDLE  m_hWritePipe2;
-
 };
 

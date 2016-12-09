@@ -49,7 +49,14 @@ bool ControlCenter::StartCommand(char* m_cmd)
 
 	TCHAR command[1024] = _T("adb.exe shell");
 	if (m_cmd != NULL)
-		sprintf_s(command, _T("%s"), m_cmd);
+	{
+#ifdef UNICODE  
+		MultiByteToWideChar(CP_ACP, 0, m_cmd, -1, command, sizeof(command));
+#else  
+		strcpy_s(command, m_cmd);
+#endif  
+	}
+		
 
 	if (CreateProcess(NULL, command, NULL, NULL, TRUE, 0, NULL, NULL, &startupinfo, &pinfo) == FALSE)
 	{
@@ -104,14 +111,8 @@ bool ControlCenter::Loop()
 	CloseHandle(hThread);
 	hThread = NULL;
 
-	
-	memset(m_info,0x0,sizeof(m_info));
-	sprintf_s(m_info,"---<%s:%d>---\n",__func__,__LINE__);
-	TRACE(_T(m_info));
 	TRACE(m_strOutput);
-	memset(m_info, 0x0, sizeof(m_info));
-	sprintf_s(m_info, "---<%s:%d>---\n", __func__, __LINE__);
-	TRACE(_T(m_info));
+
 
 	return TRUE;
 }
@@ -195,7 +196,13 @@ CString ControlCenter::StartSingleCommand(char* m_cmd)
 
 	TCHAR command[1024] = _T("adb.exe shell");
 	if (m_cmd != NULL)
-		sprintf_s(command, _T("%s"), m_cmd);
+	{
+#ifdef UNICODE  
+		MultiByteToWideChar(CP_ACP, 0, m_cmd, -1, command, sizeof(command));
+#else  
+		strcpy_s(command, m_cmd);
+#endif  
+	}
 
 	if (CreateProcess(NULL, command, NULL, NULL, TRUE, 0, NULL, NULL, &startupinfo, &pinfo) == FALSE)
 	{
@@ -244,3 +251,24 @@ CString ControlCenter::StartSingleCommand(char* m_cmd)
 	return m_strOutput;
 }
 
+
+
+char* ControlCenter::ConvertLPWSTRToLPSTR(LPWSTR lpwszStrIn)
+{
+	LPSTR pszOut = NULL;
+	if (lpwszStrIn != NULL)
+	{
+		int nInputStrLen = wcslen(lpwszStrIn);
+
+		// Double NULL Termination  
+		int nOutputStrLen = WideCharToMultiByte(CP_ACP, 0, lpwszStrIn, nInputStrLen, NULL, 0, 0, 0) + 2;
+		pszOut = new char[nOutputStrLen];
+
+		if (pszOut)
+		{
+			memset(pszOut, 0x00, nOutputStrLen);
+			WideCharToMultiByte(CP_ACP, 0, lpwszStrIn, nInputStrLen, pszOut, nOutputStrLen, 0, 0);
+		}
+	}
+	return pszOut;
+}

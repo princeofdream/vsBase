@@ -254,7 +254,7 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 void CFactoryToolsDlg::CheckAdbStat()
 {
 	//CEdit* pEdit = (CEdit*)GetDlgItem(IDC_STAT);
-	TCHAR * m_stat_info;
+	CString m_stat_info;
 	CString get_adb_stat;
 
 	draw_runing = TRUE;
@@ -262,12 +262,12 @@ void CFactoryToolsDlg::CheckAdbStat()
 
 	get_adb_stat = m_ctrlcent.StartSingleCommand("adb");
 	if (get_adb_stat.IsEmpty())
-		m_stat_info = _T("Check ADB Stat: Fail");
+		m_stat_info = "Check ADB Stat: Fail";
 	else
-		m_stat_info = _T("Check ADB Stat: OK");
+		m_stat_info = "Check ADB Stat: OK";
 
 	//pEdit->SetWindowText((LPCTSTR)m_stat_info);
-	m_output_msg = _T(m_stat_info);
+	m_output_msg = m_stat_info;
 
 	return;
 }
@@ -289,7 +289,7 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	m_output_msg = get_info;
 	
 #if 1 //JamesL
-	if (get_info.Find("recovery") < 0)
+	if (get_info.Find(_T("recovery")) < 0)
 	{
 		m_output_msg = get_info;
 		return;
@@ -319,17 +319,20 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 void CFactoryToolsDlg::OnBnClickedRunCmd()
 {
 	CString get_info;
-	char get_cmd[1024];
+	char *get_cmd;
 	char get_full_cmd[1024];
 	//CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
+	TCHAR get_win_cmd[1024];
 
 	draw_runing = TRUE;
 	m_output_msg = "";
 
-	memset(get_cmd, 0x0, sizeof(get_cmd));
+	//memset(get_cmd, 0x0, sizeof(get_cmd));
 	memset(get_full_cmd, 0x0, sizeof(get_full_cmd));
 
-	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_cmd, sizeof(get_cmd));
+	GetDlgItem(IDC_SELF_CMD)->GetWindowText(get_win_cmd, sizeof(get_win_cmd));
+	get_cmd = m_ctrlcent.ConvertLPWSTRToLPSTR(get_win_cmd);
+
 
 	if (strlen(get_cmd) == 0)
 		sprintf_s(get_full_cmd, "adb", "");
@@ -381,6 +384,8 @@ void CFactoryToolsDlg::OnBnClickedRecheckStat()
 	CString get_sn;
 	CString get_burn_stat;
 
+	CString check_stat;
+
 	draw_runing = TRUE;
 	m_output_msg = "";
 	get_sn = "";
@@ -388,13 +393,14 @@ void CFactoryToolsDlg::OnBnClickedRecheckStat()
 	get_info = m_confutil.check_machine_stat();
 	m_output_msg = get_info;
 
-	if (get_info.Find("recovery") < 0)
+	if (get_info.Find(_T("recovery")) < 0)
 	{
 		m_output_msg = get_info;
 		return;
 	}
 
-	get_burn_stat = m_confutil.check_burned_data("CheckOnly");
+	check_stat = "CheckOnly";
+	get_burn_stat = m_confutil.check_burned_data(check_stat);
 	m_output_msg += "\r\nÉÕÂ¼×´Ì¬£º\r\n";
 	m_output_msg += get_burn_stat;
 

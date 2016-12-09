@@ -38,12 +38,12 @@ END_MESSAGE_MAP()
 
 void AdbStat::OnBnClickedOk()
 {
-	char m_sn[1024];
+	TCHAR m_sn[1024];
 	// TODO: 在此添加控件通知处理程序代码
 	CDialogEx::OnOK();
 	memset(m_sn, 0x0, sizeof(m_sn));
 	GetDlgItem(IDC_SERIAL_NUMBER)->GetWindowText(m_sn, sizeof(m_sn));
-	m_serial_number = _T(m_sn);
+	m_serial_number = m_sn;
 	
 	this->DestroyWindow();
 }
