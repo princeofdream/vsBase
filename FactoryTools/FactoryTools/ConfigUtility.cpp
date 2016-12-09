@@ -31,7 +31,9 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 
 	CString get_local_md5;
 	CString get_machine_md5;
-	
+
+	CString get_burned_data;
+
 	/*check protect partition mount stat*/
 	get_mount_stat = check_machine_mount_stat();
 	if (!get_mount_stat)
@@ -42,6 +44,12 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 	get_write_sn_stat = write_serial_number_to_machine(m_sn);
 	get_write_conf_stat = write_config_files_to_machine();
 	m_ret = m_sn;
+	if (get_write_conf_stat.Compare("OK") == 0)
+	{
+		m_ret += "\r\n" + get_write_conf_stat + "\r\n";
+		get_burned_data = check_burned_data(m_sn);
+		m_ret += get_burned_data;
+	}
 
 	return m_ret;
 }
@@ -357,6 +365,11 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	CString get_md5;
 
 	get_check_md5_stat = compare_md5_sum();
+
+	get_md5 = check_local_config_md5();
+	get_md5.Replace("\n", "\r\n");
+	get_md5.Replace(" ", "\t");
+
 	if (!get_check_md5_stat)
 	{
 		m_ret = "检查配置文件MD5码出错！";
@@ -370,9 +383,6 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 		get_sn = check_machine_serialnumber();
 		m_ret += "IBox设备ID：\t\t\t" + get_sn;
 
-		get_md5 = check_local_config_md5();
-		get_md5.Replace("\n", "\r\n");
-		get_md5.Replace(" ", "\t");
 		m_ret += "\r\nIBox配置文件MD5码值：\r\n" + get_md5;
 
 		return m_ret;
@@ -386,6 +396,7 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 			return m_ret;
 		}
 		m_ret += "IBox设备ID：" + m_sn;
+		m_ret += "\r\nIBox配置文件MD5码值：\r\n" + get_md5;
 	}
 
 
@@ -412,23 +423,42 @@ CString ConfigUtility::write_serial_number_to_machine(CString m_sn)
 }
 CString ConfigUtility::write_config_files_to_machine()
 {
+	char chPath[301];
+	TCHAR command[1024] = _T("adb");
+	TCHAR command_arg[1024] = _T("push FactoryTools.cpp /protect_s/IBoxConfig/");
+
+	STARTUPINFO si = { sizeof(si) };
+	PROCESS_INFORMATION pi;
+
+	si.cb = sizeof(STARTUPINFO);
+	GetStartupInfo(&si);
+	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	si.wShowWindow = SW_HIDE;
+	
+	::GetCurrentDirectory(300, (LPTSTR)chPath);//得到当前目录
+
 	m_ctrlcent.StartSingleCommand("adb shell \"rm -rf /protect_f/IBoxConfig/ /protect_s/IBoxConfig/ \"");
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_s/IBoxConfig/\"");
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_f/IBoxConfig/\"");
 
-	//m_ctrlcent.StartSingleCommand("adb push FactoryTools.cpp /protect_s/IBoxConfig/");
+	if (CreateProcess(NULL, "adb push FactoryTools.cpp /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == FALSE)
+	{
+		return FALSE;
+	}
 
-	/*m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\VideoRecordConfig.txt /protect_s/IBoxConfig/ ");
+	CreateProcess(NULL, "adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\VideoRecordConfig.txt /protect_s/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	
+	
 
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\CaptureConfig.txt /protect_f/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\FolderConfig.txt /protect_f/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\RTSPConfig.txt /protect_f/IBoxConfig/ ");
-	m_ctrlcent.StartSingleCommand("adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/ ");
-*/
+	CreateProcess(NULL, "adb push IBoxConfig\\CaptureConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\FolderConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\RTSPConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+	CreateProcess(NULL, "adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+
 	m_ctrlcent.StartSingleCommand("adb shell sync");
-	return "";
+	return "OK";
 }
 
