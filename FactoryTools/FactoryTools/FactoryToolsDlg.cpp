@@ -98,6 +98,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ANDROID_TEST, &CFactoryToolsDlg::OnBnClickedAndroidTest)
 	ON_BN_CLICKED(IDC_PLAY_MUSIC, &CFactoryToolsDlg::OnBnClickedPlayMusic)
 	ON_BN_CLICKED(IDC_REBOOT_TO_RECOVERY, &CFactoryToolsDlg::OnBnClickedRebootToRecovery)
+	ON_BN_CLICKED(IDC_BUTTON1, &CFactoryToolsDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -243,6 +244,8 @@ void CFactoryToolsDlg::OnBnClickedCancel()
 void CFactoryToolsDlg::OnBnClickedCheckAdb()
 {
 	CString get_device_info;
+	CString check_stat;
+	CString check_boot;
 #if 0
 	TRACE("James's Debug....");
 	m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
@@ -251,9 +254,46 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 #else
 	CheckAdbStat();
 #endif
+
+	m_output_msg += "\r\n\r\n";
+	m_output_msg += "Note：\r\n烧录设备号请保证满足以下两个条件种的任意一个：\r\n1，插入外置TF卡，并事先在外置TF卡内根目录建立了空文件enable_hg_ibox_product；";
+	m_output_msg += "\r\n2，夹具把对应GPIO口夹好并接地。\r\n到 Recovery 模式下即可烧录设备号。";
+
 	get_device_info = m_ctrlcent.StartSingleCommand("adb devices");
 	m_output_msg += "\r\n\r\n";
 	m_output_msg += get_device_info;
+
+	
+	check_stat = m_confutil.check_machine_stat(_T("devices"));
+	if (check_stat.Find("device", 0) < 0)
+	{
+		check_stat = m_confutil.check_machine_stat(_T("recovery"));
+		if (check_stat.Find("recovery", 0) < 0)
+		{
+			m_output_msg += "找不到设备！";
+		}
+		else
+		{
+			m_output_msg += "设备在Recovery模式！";
+		}
+	}
+	else
+	{
+		//m_output_msg += check_stat;
+
+		check_boot = m_ctrlcent.StartSingleCommand(_T("adb shell getprop dev.bootcomplete"));
+
+		if (check_boot.Find("1", 0) < 0)
+		{
+			m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
+			return;
+		}
+		else
+		{
+			m_output_msg += "设备已正常开机到Android正常模式！";
+		}
+	}
+	
 }
 
 
@@ -268,7 +308,7 @@ void CFactoryToolsDlg::CheckAdbStat()
 
 	get_adb_stat = m_ctrlcent.StartSingleCommand("adb");
 	if (get_adb_stat.IsEmpty())
-		m_stat_info = "Check ADB Stat: Fail";
+		m_stat_info = "Check ADB Stat: Fail\r\n\r\n请安装并配置好ADB环境变量！";
 	else
 		m_stat_info = "Check ADB Stat: OK";
 
@@ -519,4 +559,21 @@ void CFactoryToolsDlg::OnBnClickedRebootToRecovery()
 	m_output_msg += "正在重启到Recovery模式";
 
 	m_ctrlcent.StartSingleCommand("adb shell \"reboot recovery\"");
+}
+
+
+void CFactoryToolsDlg::OnBnClickedButton1()
+{
+	CString check_stat;
+	CString check_boot;
+	check_stat = m_confutil.check_machine_stat(_T("recovery"));
+	if (check_stat.Find("recovery", 0) < 0)
+	{
+		m_output_msg = check_stat;
+		return;
+	}
+	m_output_msg = check_stat;
+	m_output_msg += "正在重启..";
+
+	m_ctrlcent.StartSingleCommand("adb shell reboot");
 }

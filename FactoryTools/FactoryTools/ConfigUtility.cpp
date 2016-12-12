@@ -59,7 +59,19 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 CString ConfigUtility::check_local_config_md5()
 {
 	CString get_info;
-	get_info = m_ctrlcent.StartSingleCommand("md5sum IBoxConfig/*");
+	CString m_ret;
+	int m_pos;
+
+	get_info = m_ctrlcent.StartSingleCommand("md5sums.exe -e IBoxConfig\/*");
+	get_info.Delete(0, 200);
+	get_info.TrimLeft(_T("-"));
+	get_info.TrimLeft(_T(" "));
+	get_info.TrimLeft(_T("\t"));
+	get_info.TrimLeft(_T("\r"));
+	get_info.TrimLeft(_T("\n"));
+	m_pos = get_info.Find("\n", 0);
+	get_info.Delete(0, m_pos);
+
 	return get_info;
 }
 
@@ -385,7 +397,7 @@ bool ConfigUtility::check_machine_mount_stat()
 
 
 
-bool ConfigUtility::compare_md5_sum()
+CString ConfigUtility::compare_md5_sum()
 {
 	CString get_local_md5;
 	CString get_machine_md5_s;
@@ -404,32 +416,29 @@ bool ConfigUtility::compare_md5_sum()
 	m_pos_end = 0;
 	for (int i0 = 0; i0 < 10; i0++)
 	{
+		m_pos_start = get_local_md5.Find(_T(" "), m_pos_end);
+		if (m_pos_start < 0 || m_pos_end < 0)
+			break;
+		m_pos_end = get_local_md5.Find(_T("\n"), m_pos_start);
 		if (m_pos_start < 0 || m_pos_end < 0)
 			break;
 
-		if (m_pos_start == 0 && m_pos_end == 0)
-		{
-			m_pos_end = get_local_md5.Find(_T(" "), m_pos_start);
-			get_single_md5_tmp = get_local_md5.Mid(m_pos_start, m_pos_end - m_pos_start);
+		debug_str.Format(_T("--s->%d<-e->%d<---delta->%d<--"), m_pos_start, m_pos_end, m_pos_end - m_pos_start);
 
-			debug_str.Format(_T("--s->%d<-e->%d<---delta->%d<--"), m_pos_start, m_pos_end, m_pos_end - m_pos_start);
-			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
-		}
-		else
-		{
 
-			m_pos_start = get_local_md5.Find(_T("\n"), m_pos_end);
-			m_pos_end = get_local_md5.Find(_T(" "), m_pos_start);
-			//if (m_pos_start < 0 || m_pos_end < 0)
-			//	break;
-			get_single_md5_tmp = get_local_md5.Mid(m_pos_start + 1, m_pos_end - m_pos_start);
+		get_single_md5_tmp = get_local_md5.Mid(m_pos_start + 1, m_pos_end - m_pos_start);
+		TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
 
-			debug_str.Format(_T("--s->%d<-e->%d<---delta->%d<--"), m_pos_start, m_pos_end, m_pos_end - m_pos_start);
-			//TRACE("\n" + debug_str + "--->" + get_single_md5_tmp + "<----");
-		}
+		get_single_md5_tmp.TrimLeft(_T(" "));
+		get_single_md5_tmp.TrimLeft(_T("	"));
+		get_single_md5_tmp.TrimLeft(_T("\n"));
 		get_single_md5_tmp.TrimRight(_T(" "));
 		get_single_md5_tmp.TrimRight(_T("	"));
-		get_single_md5_tmp.TrimLeft(_T("\n"));
+		get_single_md5_tmp.TrimRight(_T("\n"));
+		get_single_md5_tmp.TrimRight(_T("\r"));
+
+
+
 		get_single_md5 = "";
 		if (get_single_md5_tmp.GetLength() == 32)
 		{
@@ -445,14 +454,14 @@ bool ConfigUtility::compare_md5_sum()
 
 		if (get_machine_md5_s.Find(get_single_md5, 0) < 0)
 		{
-			return FALSE;
+			return "NG";
 		}
 		if (get_machine_md5_s.Find(get_single_md5, 0) < 0)
 		{
-			return FALSE;
+			return "NG";
 		}
 	}
-	return TRUE;
+	return "OK";
 }
 
 
@@ -485,7 +494,7 @@ bool ConfigUtility::compare_serail_number(CString m_sn)
 CString ConfigUtility::check_burned_data(CString m_sn)
 {
 	CString m_ret;
-	bool get_check_md5_stat;
+	CString get_check_md5_stat;
 	bool get_check_sn_stat;
 	CString get_sn;
 	CString get_local_md5;
@@ -497,8 +506,9 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	get_machine_md5_s = check_machine_config_md5(_T("protect_s"));
 	get_machine_md5_f = check_machine_config_md5(_T("protect_f"));
 
+	get_local_md5.Replace(_T("\r\n"), _T("\n"));
 	get_local_md5.Replace(_T("\n"), _T("\r\n"));
-	get_local_md5.Replace(_T(" "), _T("\t"));
+	//get_local_md5.Replace(_T(" "), _T("\t"));
 
 	get_machine_md5_s.Replace(_T("\n"), _T("\r\n"));
 	get_machine_md5_s.Replace(_T(" "), _T("\t"));
@@ -506,7 +516,7 @@ CString ConfigUtility::check_burned_data(CString m_sn)
 	get_machine_md5_f.Replace(_T("\n"), _T("\r\n"));
 	get_machine_md5_f.Replace(_T(" "), _T("\t"));
 
-	if (!get_check_md5_stat)
+	if (get_check_md5_stat.Find("OK",0) != 0)
 	{
 		m_ret = "检查配置文件MD5码出错！";
 		m_ret += "\r\nIBox配置文件MD5码值：\r\n";

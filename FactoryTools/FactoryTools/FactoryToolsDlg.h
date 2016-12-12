@@ -65,4 +65,5 @@ public:
 	afx_msg void OnBnClickedAndroidTest();
 	afx_msg void OnBnClickedPlayMusic();
 	afx_msg void OnBnClickedRebootToRecovery();
+	afx_msg void OnBnClickedButton1();
 };

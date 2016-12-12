@@ -21,7 +21,7 @@ public:
 	CString get_devices_recovery_machine_id();
 	CString get_devices_machine_id();
 	bool check_machine_mount_stat();
-	bool compare_md5_sum();
+	CString compare_md5_sum();
 	bool compare_serail_number(CString m_sn);
 	CString check_burned_data(CString m_sn);
 	CString write_serial_number_to_machine(CString m_sn);

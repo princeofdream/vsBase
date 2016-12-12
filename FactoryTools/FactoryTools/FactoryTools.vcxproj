@@ -203,6 +203,7 @@
     <ClInclude Include="DlgProxy.h" />
     <ClInclude Include="FactoryTools.h" />
     <ClInclude Include="FactoryToolsDlg.h" />
+    <ClInclude Include="md5.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="DlgProxy.cpp" />
     <ClCompile Include="FactoryTools.cpp" />
     <ClCompile Include="FactoryToolsDlg.cpp" />
+    <ClCompile Include="md5.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
