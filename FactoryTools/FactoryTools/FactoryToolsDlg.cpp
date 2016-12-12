@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RECHECK_STAT, &CFactoryToolsDlg::OnBnClickedRecheckStat)
 	ON_BN_CLICKED(IDC_ANDROID_TEST, &CFactoryToolsDlg::OnBnClickedAndroidTest)
 	ON_BN_CLICKED(IDC_PLAY_MUSIC, &CFactoryToolsDlg::OnBnClickedPlayMusic)
+	ON_BN_CLICKED(IDC_REBOOT_TO_RECOVERY, &CFactoryToolsDlg::OnBnClickedRebootToRecovery)
 END_MESSAGE_MAP()
 
 
@@ -241,7 +242,7 @@ void CFactoryToolsDlg::OnBnClickedCancel()
 
 void CFactoryToolsDlg::OnBnClickedCheckAdb()
 {
-	// TODO: 在此添加控件通知处理程序代码
+	CString get_device_info;
 #if 0
 	TRACE("James's Debug....");
 	m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
@@ -250,6 +251,9 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 #else
 	CheckAdbStat();
 #endif
+	get_device_info = m_ctrlcent.StartSingleCommand("adb devices");
+	m_output_msg += "\r\n\r\n";
+	m_output_msg += get_device_info;
 }
 
 
@@ -428,7 +432,7 @@ void CFactoryToolsDlg::OnBnClickedAndroidTest()
 	m_output_msg = check_stat;
 
 	check_boot = m_ctrlcent.StartSingleCommand(_T("adb shell getprop dev.bootcomplete"));
-	m_output_msg += check_boot;
+
 	if (check_boot.Find("1",0) < 0)
 	{
 		m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
@@ -497,4 +501,22 @@ void CFactoryToolsDlg::OnBnClickedPlayMusic()
 
 	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
 	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+}
+
+
+void CFactoryToolsDlg::OnBnClickedRebootToRecovery()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString check_stat;
+	CString check_boot;
+	check_stat = m_confutil.check_machine_stat(_T("devices"));
+	if (check_stat.Find("device", 0) < 0)
+	{
+		m_output_msg = check_stat;
+		return;
+	}
+	m_output_msg = check_stat;
+	m_output_msg += "正在重启到Recovery模式";
+
+	m_ctrlcent.StartSingleCommand("adb shell \"reboot recovery\"");
 }
