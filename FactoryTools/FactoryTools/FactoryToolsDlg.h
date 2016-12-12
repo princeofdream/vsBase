@@ -62,4 +62,6 @@ public:
 	afx_msg void OnBnClickedRunCmd();
 	bool Loop();
 	afx_msg void OnBnClickedRecheckStat();
+	afx_msg void OnBnClickedAndroidTest();
+	afx_msg void OnBnClickedPlayMusic();
 };

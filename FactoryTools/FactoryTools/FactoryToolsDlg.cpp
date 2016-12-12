@@ -95,6 +95,8 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_START_BURN, &CFactoryToolsDlg::OnBnClickedStartBurn)
 	ON_BN_CLICKED(IDC_RUN_CMD, &CFactoryToolsDlg::OnBnClickedRunCmd)
 	ON_BN_CLICKED(IDC_RECHECK_STAT, &CFactoryToolsDlg::OnBnClickedRecheckStat)
+	ON_BN_CLICKED(IDC_ANDROID_TEST, &CFactoryToolsDlg::OnBnClickedAndroidTest)
+	ON_BN_CLICKED(IDC_PLAY_MUSIC, &CFactoryToolsDlg::OnBnClickedPlayMusic)
 END_MESSAGE_MAP()
 
 
@@ -285,7 +287,7 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	get_sn = "";
 	
 	m_adbstat.set_serial_number_empty();
-	get_info = m_confutil.check_machine_stat();
+	get_info = m_confutil.check_machine_stat(_T("recovery"));
 	m_output_msg = get_info;
 	
 #if 1 //JamesL
@@ -395,7 +397,7 @@ void CFactoryToolsDlg::OnBnClickedRecheckStat()
 	m_output_msg = "";
 	get_sn = "";
 
-	get_info = m_confutil.check_machine_stat();
+	get_info = m_confutil.check_machine_stat(_T("recovery"));
 	m_output_msg = get_info;
 
 	if (get_info.Find(_T("recovery")) < 0)
@@ -410,4 +412,89 @@ void CFactoryToolsDlg::OnBnClickedRecheckStat()
 	m_output_msg += get_burn_stat;
 
 	return;
+}
+
+
+void CFactoryToolsDlg::OnBnClickedAndroidTest()
+{
+	CString check_stat;
+	CString check_boot;
+	check_stat = m_confutil.check_machine_stat(_T("devices"));
+	if (check_stat.Find("device",0) < 0 )
+	{
+		m_output_msg = check_stat;
+		return;
+	}
+	m_output_msg = check_stat;
+
+	check_boot = m_ctrlcent.StartSingleCommand(_T("adb shell getprop dev.bootcomplete"));
+	m_output_msg += check_boot;
+	if (check_boot.Find("1",0) < 0)
+	{
+		m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
+		return;
+	}
+
+	m_output_msg += "\r\n进入测试模式……";
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_camera"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_wifiap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_ap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_timeout"));
+
+	m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 4"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell \"am start -n com.android.sim/com.android.sim.CITMain\""));
+	
+
+
+}
+
+
+void CFactoryToolsDlg::OnBnClickedPlayMusic()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	char chPath[301];
+
+	STARTUPINFO si = { sizeof(si) };
+	PROCESS_INFORMATION pi;
+
+	CString check_stat;
+	CString check_boot;
+
+	si.cb = sizeof(STARTUPINFO);
+	GetStartupInfo(&si);
+	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+	si.wShowWindow = SW_HIDE;
+
+	::GetCurrentDirectory(300, (LPTSTR)chPath);//得到当前目录
+
+
+	check_stat = m_confutil.check_machine_stat(_T("devices"));
+	if (check_stat.Find("device", 0) < 0)
+	{
+		m_output_msg = check_stat;
+		return;
+	}
+	m_output_msg = check_stat;
+	check_boot = m_ctrlcent.StartSingleCommand(_T("adb shell getprop dev.bootcomplete"));
+	if (check_boot.Find("1", 0) < 0)
+	{
+		m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
+		return;
+	}
+	m_output_msg += "\r\n播放音乐，共4分钟……";
+
+
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_camera"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_wifiap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_ap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell touch /sdcard/disable_hg_ibox_timeout"));
+
+	m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 4"));
+
+
+	CreateProcess(NULL, _T("adb push test.mp3 /sdcard/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+
+	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
 }

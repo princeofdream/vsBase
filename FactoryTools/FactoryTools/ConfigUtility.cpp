@@ -97,30 +97,123 @@ CString ConfigUtility::check_machine_serialnumber()
 	return m_ret;
 }
 
-CString ConfigUtility::check_machine_stat()
+CString ConfigUtility::check_machine_stat(CString get_mode)
 {
 	CString get_stat;
 	CString m_ret;
 
 	for (int i0 = 0; i0 <= 3; i0++)
 	{
-		get_stat = check_devices_recovery_online();
-		if (get_stat.CompareNoCase(_T("OK")) == 0)
+		if (get_mode.Compare(_T("recovery")) == 0)
 		{
-			m_ret = get_devices_recovery_machine_id();
-			break;
-		}
-		else if (get_stat.CompareNoCase(_T("HOST")) == 0)
-		{
-			m_ctrlcent.StartSingleCommand("adb kill-server");
-			continue;
+			get_stat = check_devices_recovery_online();
+			if (get_stat.CompareNoCase(_T("OK")) == 0)
+			{
+				m_ret = get_devices_recovery_machine_id();
+				break;
+			}
+			else if (get_stat.CompareNoCase(_T("HOST")) == 0)
+			{
+				m_ctrlcent.StartSingleCommand("adb kill-server");
+				continue;
+			}
+			else
+			{
+				m_ret = get_stat;
+				break;
+			}
 		}
 		else
 		{
-			m_ret = get_stat;
-			break;
+			get_stat = check_devices_online();
+			if (get_stat.CompareNoCase(_T("OK")) == 0)
+			{
+				m_ret = get_devices_machine_id();
+				break;
+			}
+			else if (get_stat.CompareNoCase(_T("HOST")) == 0)
+			{
+				m_ctrlcent.StartSingleCommand("adb kill-server");
+				continue;
+			}
+			else
+			{
+				m_ret = get_stat;
+				break;
+			}
 		}
 	}
+
+	return m_ret;
+}
+
+
+
+
+CString ConfigUtility::check_devices_online()
+{
+	CString get_stat;
+	CString m_ret;
+	int m_pos, m_count_recovery, m_count_devices, m_count_host;
+	CString str_debug;
+
+	/* for example, we have a devices in first line
+	List of devices attached
+	emulator-5584   host
+	AAYTT8IRS49TGEHY        device
+	AAYTT8IRS49TGEHZ        device
+	AAYTT8IRS49TGEHX        recovery
+	*/
+	get_stat = m_ctrlcent.StartSingleCommand("adb devices");
+	m_count_recovery = 0;
+	m_count_devices = 0;
+	m_count_host = 0;
+
+	m_pos = 0;
+	m_pos = get_stat.Find(_T("recovery"), m_pos + 1);
+	if (m_pos >= 0)
+	{
+		m_ret =  "IBox处于Recovery模式，请按VCR按键重启进入正常开机模式！";
+		return m_ret;
+	}
+	m_pos = 0;
+	for (int i0 = 0; i0 < 5; i0++)
+	{
+		m_pos = get_stat.Find(_T("device"), m_pos + 1);
+		if (m_pos < 0)
+			break;
+		++m_count_devices;
+		str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_count_devices);
+		TRACE(str_debug);
+	}
+	--m_count_devices;/*Because we have one more key word.*/
+	if (m_count_devices > 1)
+	{
+		m_ret = "找到多个设备，请确保只接入一个设备!";
+	}
+	else if (m_count_devices < 1)
+	{
+		m_ret = "找不到设备，请确保设备已经接入！";
+	}
+
+	m_pos = 0;
+	for (int i0 = 0; i0 < 5; i0++)
+	{
+		m_pos = get_stat.Find(_T("host"), m_pos + 1);
+		if (m_pos < 0)
+			break;
+		++m_count_host;
+		str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_count_host);
+		TRACE(str_debug);
+	}
+
+	if (m_count_host > 0)
+	{
+		m_ret = "HOST";
+		return m_ret;
+	}
+	
+	m_ret = "OK";
 
 	return m_ret;
 }
@@ -238,6 +331,35 @@ CString ConfigUtility::get_devices_recovery_machine_id()
 	TRACE(str_debug);
 	TRACE(m_ret);
 	
+	//m_ret.TrimRight(" ");
+	//m_ret.TrimRight("	");
+	return m_ret;
+}
+
+CString ConfigUtility::get_devices_machine_id()
+{
+	CString get_stat;
+	CString m_ret;
+	int m_pos, m_pos_device;
+	CString str_debug;
+
+	/* for example, we have a devices in first line
+	List of devices attached
+	emulator-5584   host
+	AAYTT8IRS49TGEHY        device
+	AAYTT8IRS49TGEHZ        device
+	AAYTT8IRS49TGEHX        recovery
+	*/
+	get_stat = m_ctrlcent.StartSingleCommand("adb devices");
+
+	m_pos = get_stat.Find(_T("\n"), 0);
+	m_pos_device = get_stat.Find(_T("device"), m_pos);
+
+	m_ret = get_stat.Mid(m_pos + 1, m_pos_device - m_pos - 1 + 8);
+	str_debug.Format(_T("\n=====>%d == %d<====="), m_pos, m_pos_device);
+	TRACE(str_debug);
+	TRACE(m_ret);
+
 	//m_ret.TrimRight(" ");
 	//m_ret.TrimRight("	");
 	return m_ret;
