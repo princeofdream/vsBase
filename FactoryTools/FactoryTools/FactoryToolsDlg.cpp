@@ -552,8 +552,8 @@ void CFactoryToolsDlg::OnBnClickedPlayMusic()
 
 	CreateProcess(NULL, _T("adb push test.mp3 /sdcard/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
-	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
-	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
 }
 
 
