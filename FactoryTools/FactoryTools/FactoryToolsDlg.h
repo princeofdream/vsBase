@@ -66,4 +66,5 @@ public:
 	afx_msg void OnBnClickedPlayMusic();
 	afx_msg void OnBnClickedRebootToRecovery();
 	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedClearTest();
 };

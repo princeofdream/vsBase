@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_PLAY_MUSIC, &CFactoryToolsDlg::OnBnClickedPlayMusic)
 	ON_BN_CLICKED(IDC_REBOOT_TO_RECOVERY, &CFactoryToolsDlg::OnBnClickedRebootToRecovery)
 	ON_BN_CLICKED(IDC_BUTTON1, &CFactoryToolsDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_CLEAR_TEST, &CFactoryToolsDlg::OnBnClickedClearTest)
 END_MESSAGE_MAP()
 
 
@@ -274,7 +275,7 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 		}
 		else
 		{
-			m_output_msg += "设备在Recovery模式！";
+			m_output_msg += "Recovery模式：设备在Recovery模式！";
 		}
 	}
 	else
@@ -285,12 +286,12 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 
 		if (check_boot.Find("1", 0) < 0)
 		{
-			m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
+			m_output_msg += "Android 模式：正在开机！";
 			return;
 		}
 		else
 		{
-			m_output_msg += "设备已正常开机到Android正常模式！";
+			m_output_msg += "Android 模式：开机完成！";
 		}
 	}
 	
@@ -381,24 +382,35 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 	//MultiByteToWideChar(CP_ACP, 0, m_cmd, -1, command, sizeof(command));
 	WideCharToMultiByte(CP_ACP, 0, get_cmd, -1, get_win_cmd, sizeof(get_win_cmd));
 #else
-	strcpy_s(get_cmd, get_win_cmd);
+	strcpy_s(get_full_cmd, get_win_cmd);
 #endif
 
 
-	if (strlen(get_cmd) == 0)
+	if (strlen(get_win_cmd) == 0)
+	{
+		TRACE("-------1-------->");
 		sprintf_s(get_full_cmd, "adb", "");
-	else if ( _stricmp(get_cmd, "devices") == 0)
+	}
+	else if (_stricmp(get_win_cmd, "devices") == 0)
+	{
+		TRACE("--------2------->");
 		sprintf_s(get_full_cmd, "adb devices", "");
+	}
 	else
-		sprintf_s(get_full_cmd, "adb shell \"%s\"", get_cmd);
+	{
+		TRACE("-------3-------->");
+		sprintf_s(get_full_cmd, "adb shell \"%s\"", get_win_cmd);
+	}
+	TRACE("--------------->");
 	TRACE(get_full_cmd);
+	TRACE("<---------------");
 
 	//get_info = m_ctrlcent.StartSingleCommand("adb shell ls");
-	get_info = m_ctrlcent.StartSingleCommand(get_full_cmd);
+	get_info = m_ctrlcent.StartSingleCommand(_T(get_full_cmd));
 
 
-	if (get_info.IsEmpty())
-		m_output_msg = "Error! Can not Find ADB. Please Check if ADB is installed!";
+	if (get_info.GetLength() == 0)
+		m_output_msg = "没回应，可能已经执行成功，God bless you!";
 	else
 		m_output_msg += get_info;
 
@@ -536,11 +548,12 @@ void CFactoryToolsDlg::OnBnClickedPlayMusic()
 
 	m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 4"));
 
+	//m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 86"));
 
 	CreateProcess(NULL, _T("adb push test.mp3 /sdcard/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
-	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
-	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+	//m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.music/com.android.music.MediaPlaybackActivity -d /sdcard/test.mp3\"");
+	m_ctrlcent.StartSingleCommand("adb shell \"am start -n com.android.ringtune/com.android.ringtune.MediaPlaybackActivity -d /sdcard/test.mp3\"");
 }
 
 
@@ -576,4 +589,35 @@ void CFactoryToolsDlg::OnBnClickedButton1()
 	m_output_msg += "正在重启..";
 
 	m_ctrlcent.StartSingleCommand("adb shell reboot");
+}
+
+
+void CFactoryToolsDlg::OnBnClickedClearTest()
+{
+	CString check_stat;
+	CString check_boot;
+	check_stat = m_confutil.check_machine_stat(_T("devices"));
+	if (check_stat.Find("device", 0) < 0)
+	{
+		m_output_msg = check_stat;
+		return;
+	}
+	m_output_msg = check_stat;
+
+	check_boot = m_ctrlcent.StartSingleCommand(_T("adb shell getprop dev.bootcomplete"));
+
+	if (check_boot.Find("1", 0) < 0)
+	{
+		m_output_msg += "设备未完成开机，请等待设备开机完成后再操作！";
+		return;
+	}
+
+	m_output_msg += "\r\n进入测试模式……";
+	m_ctrlcent.StartSingleCommand(_T("adb shell rm -rf  /sdcard/disable_hg_ibox_camera"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell rm -rf  /sdcard/disable_hg_ibox_wifiap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell rm -rf  /sdcard/disable_hg_ibox_ap"));
+	m_ctrlcent.StartSingleCommand(_T("adb shell rm -rf /sdcard/disable_hg_ibox_timeout"));
+
+	m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 4"));
+//	m_ctrlcent.StartSingleCommand(_T("adb shell \"am start -n com.android.sim/com.android.sim.CITMain\""));
 }
