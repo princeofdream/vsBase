@@ -7,6 +7,7 @@
 #include "FactoryToolsDlg.h"
 #include "DlgProxy.h"
 #include "afxdialogex.h"
+#include <dbt.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -100,6 +101,10 @@ BEGIN_MESSAGE_MAP(CFactoryToolsDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_REBOOT_TO_RECOVERY, &CFactoryToolsDlg::OnBnClickedRebootToRecovery)
 	ON_BN_CLICKED(IDC_BUTTON1, &CFactoryToolsDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_CLEAR_TEST, &CFactoryToolsDlg::OnBnClickedClearTest)
+	ON_WM_TIMER()
+	ON_MESSAGE(WM_DEVICECHANGE, OnMyDeviceChange)
+	//ON_WM_DEVICECHANGE()
+	//ON_MESSAGE(WM_DEVICECHANGE, &CFactoryToolsDlg::OnDeviceChange)
 END_MESSAGE_MAP()
 
 
@@ -142,6 +147,23 @@ BOOL CFactoryToolsDlg::OnInitDialog()
 	//CheckAdbStat();
 	DWORD dwThread = FALSE;
 	hThread = CreateThread(NULL, 0, CFactoryToolsDlgThreadProc, this, 0, &dwThread);
+
+	SetTimer(1, 1000, NULL);
+
+	HDEVNOTIFY hDevNotify;
+	DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+	ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
+	NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+	NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+	for (int i = 0; i<sizeof(GUID_DEVINTERFACE_LIST) / sizeof(GUID); i++) {
+		NotificationFilter.dbcc_classguid = GUID_DEVINTERFACE_LIST[i];
+		hDevNotify = RegisterDeviceNotification(this->GetSafeHwnd(), &NotificationFilter, DEVICE_NOTIFY_WINDOW_HANDLE);
+		if (!hDevNotify) {
+			AfxMessageBox(CString("Can't register device notification: ")
+				+ _com_error(GetLastError()).ErrorMessage(), MB_ICONEXCLAMATION);
+			return FALSE;
+		}
+	}
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -360,6 +382,34 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	m_output_msg += get_burn_stat;
 
 	return;
+
+	
+}
+
+BOOL CFactoryToolsDlg::StartBurn()
+{
+	CString get_info;
+	CString get_sn;
+	CString get_burn_stat;
+	BOOL ret = FALSE;
+
+	draw_runing = TRUE;
+	m_output_msg = "";
+	get_sn = "";
+
+	m_adbstat.set_serial_number_empty();
+	get_info = m_confutil.check_machine_stat("recovery");
+	m_output_msg = get_info;
+
+#if 1 //JamesL
+	if (get_info.Find(_T("recovery")) > 0)
+	{
+		m_output_msg = get_info;
+		ret = TRUE;
+
+	}
+	return ret;
+#endif
 }
 
 
@@ -620,4 +670,104 @@ void CFactoryToolsDlg::OnBnClickedClearTest()
 
 	m_ctrlcent.StartSingleCommand(_T("adb shell input keyevent 4"));
 //	m_ctrlcent.StartSingleCommand(_T("adb shell \"am start -n com.android.sim/com.android.sim.CITMain\""));
+}
+
+
+void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	BOOL isok = FALSE;
+	CString get_info;
+	CString get_sn;
+	CString get_burn_stat;
+	AdbStat dlgadbstat;
+
+	switch (nIDEvent)
+	{
+	case 1:
+		isok=StartBurn();
+		if(isok)
+		{
+			KillTimer(1);
+
+			dlgadbstat.DoModal();
+			get_sn = dlgadbstat.get_serial_number();
+
+			if (get_sn.IsEmpty())
+			{
+				m_output_msg += "\r\n没有输入设备号，停止烧录！";
+				return ;
+			}
+			m_output_msg += "\r\n输入的设备号为：	";
+			m_output_msg += get_sn;
+
+			get_burn_stat = m_confutil.start_burn_local_config_to_machine(get_sn);
+			m_output_msg += "\r\n烧录状态：";
+			m_output_msg += get_burn_stat;
+
+
+			
+				
+		}
+		break;
+     
+	default:
+		break;
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+LRESULT CFactoryToolsDlg::OnMyDeviceChange(WPARAM wParam, LPARAM lParam)
+{
+	CString szTmp;
+
+	if (DBT_DEVICEARRIVAL == wParam || DBT_DEVICEREMOVECOMPLETE == wParam)
+	{
+		PDEV_BROADCAST_HDR pHdr = (PDEV_BROADCAST_HDR)lParam;
+		PDEV_BROADCAST_DEVICEINTERFACE pDevInf;
+		PDEV_BROADCAST_HANDLE pDevHnd;
+		PDEV_BROADCAST_OEM pDevOem;
+		PDEV_BROADCAST_PORT pDevPort;
+		PDEV_BROADCAST_VOLUME pDevVolume;
+
+		switch (pHdr->dbch_devicetype) 
+		{
+		case DBT_DEVTYP_DEVICEINTERFACE:
+			pDevInf = (PDEV_BROADCAST_DEVICEINTERFACE)pHdr;
+			//UpdateDevice(pDevInf, wParam);
+			if (DBT_DEVICEARRIVAL == wParam) 
+			{
+				szTmp.Format(_T("Adding \r\n"));
+				SetTimer(1, 1000, NULL);
+				
+			}
+			else 
+			{
+				szTmp.Format(_T("Removing \r\n"));
+				KillTimer(1);
+			}
+
+			TRACE(szTmp);
+			//AfxMessageBox(szTmp);
+			break;
+
+		case DBT_DEVTYP_HANDLE:
+			pDevHnd = (PDEV_BROADCAST_HANDLE)pHdr;
+			break;
+
+		case DBT_DEVTYP_OEM:
+			pDevOem = (PDEV_BROADCAST_OEM)pHdr;
+			break;
+
+		case DBT_DEVTYP_PORT:
+			pDevPort = (PDEV_BROADCAST_PORT)pHdr;
+			break;
+
+		case DBT_DEVTYP_VOLUME:
+			pDevVolume = (PDEV_BROADCAST_VOLUME)pHdr;
+			break;
+		}
+	}
+	return 0;
 }

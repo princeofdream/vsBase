@@ -30,6 +30,7 @@ void AdbStat::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(AdbStat, CDialogEx)
 	ON_BN_CLICKED(IDOK, &AdbStat::OnBnClickedOk)
 	ON_BN_CLICKED(IDCANCEL, &AdbStat::OnBnClickedCancel)
+	ON_EN_CHANGE(IDC_SERIAL_NUMBER, &AdbStat::OnChangeSerialNumber)
 END_MESSAGE_MAP()
 
 
@@ -65,4 +66,32 @@ CString AdbStat::get_serial_number()
 void AdbStat::set_serial_number_empty()
 {
 	m_serial_number = "";
+}
+
+void AdbStat::OnChangeSerialNumber()
+{
+	CString str_tmp;
+	GetDlgItemText(IDC_SERIAL_NUMBER, str_tmp);
+
+	str_tmp.TrimLeft();
+	str_tmp.TrimRight();
+
+
+
+	if (str_tmp.GetLength() ==15)
+	{
+		m_serial_number = str_tmp;
+		OnOK();
+	}
+}
+
+
+BOOL AdbStat::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	this->GetDlgItem(IDC_SERIAL_NUMBER)->SetFocus();
+	((CEdit*)(GetDlgItem(IDC_SERIAL_NUMBER)))->SetSel(0, -1);
+
+	return FALSE;
 }

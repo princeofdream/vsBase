@@ -63,6 +63,9 @@ CString ConfigUtility::check_local_config_md5()
 	int m_pos;
 
 	get_info = m_ctrlcent.StartSingleCommand("md5sums.exe -e IBoxConfig\/*");
+	TRACE("\n================JamesLLLLLLLLLLL\n");
+	TRACE(get_info);
+	TRACE("\n================GGGGGGGGGGGGGGGGG\n");
 	get_info.Delete(0, 200);
 	get_info.TrimLeft(_T("-"));
 	get_info.TrimLeft(_T(" "));

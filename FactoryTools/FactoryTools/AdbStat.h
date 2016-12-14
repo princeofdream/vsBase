@@ -26,4 +26,6 @@ public:
 	afx_msg void OnBnClickedCancel();
 	CString get_serial_number();
 	void set_serial_number_empty();
+	afx_msg void OnChangeSerialNumber();
+	virtual BOOL OnInitDialog();
 };
