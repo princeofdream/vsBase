@@ -393,18 +393,18 @@ BOOL CFactoryToolsDlg::StartBurn()
 	CString get_burn_stat;
 	BOOL ret = FALSE;
 
-	draw_runing = TRUE;
-	m_output_msg = "";
+	//draw_runing = TRUE;
+	//m_output_msg = "";
 	get_sn = "";
 
 	m_adbstat.set_serial_number_empty();
 	get_info = m_confutil.check_machine_stat("recovery");
-	m_output_msg = get_info;
+	//m_output_msg = get_info;
 
 #if 1 //JamesL
 	if (get_info.Find(_T("recovery")) > 0)
 	{
-		m_output_msg = get_info;
+		//m_output_msg = get_info;
 		ret = TRUE;
 
 	}
@@ -701,13 +701,10 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 			m_output_msg += "\r\n输入的设备号为：	";
 			m_output_msg += get_sn;
 
+			TRACE("\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 			get_burn_stat = m_confutil.start_burn_local_config_to_machine(get_sn);
 			m_output_msg += "\r\n烧录状态：";
-			m_output_msg += get_burn_stat;
-
-
-			
-				
+			m_output_msg += get_burn_stat;				
 		}
 		break;
      
