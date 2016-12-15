@@ -14,6 +14,7 @@
 #endif
 
 static bool draw_runing = FALSE;
+static bool audo_detect_device_to_burn_sn = FALSE;
 
 DWORD __stdcall CFactoryToolsDlgThreadProc(void *pVoid)
 {
@@ -287,6 +288,8 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 	m_output_msg += get_device_info;
 
 	
+	TRACE("\nEntering OnBnClickedCheckAdb ...");
+
 	check_stat = m_confutil.check_machine_stat(_T("devices"));
 	if (check_stat.Find("device", 0) < 0)
 	{
@@ -353,17 +356,21 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	m_output_msg = "";
 	get_sn = "";
 	
+	TRACE("\nEntering OnBnClickedStartBurn ...");
+
 	m_adbstat.set_serial_number_empty();
 	get_info = m_confutil.check_machine_stat(_T("recovery"));
 	m_output_msg = get_info;
 	
-#if 1 //JamesL
+	
+
+#if 0 //JamesL
 	if (get_info.Find(_T("recovery")) < 0)
 	{
 		m_output_msg = get_info;
 		return;
 	}
-#endif
+
 
 	/*new a dialog to get input serial number*/
 	m_adbstat.DoModal();
@@ -381,6 +388,30 @@ void CFactoryToolsDlg::OnBnClickedStartBurn()
 	m_output_msg += "\r\n烧录状态：";
 	m_output_msg += get_burn_stat;
 
+#else
+	if (audo_detect_device_to_burn_sn)
+	{
+		CWnd *pWnd;
+		
+		audo_detect_device_to_burn_sn = FALSE;
+
+		pWnd = GetDlgItem(IDC_START_BURN);
+		pWnd->SetWindowText(_T("开始烧录设备号"));
+		m_output_msg += "\r\n按 <开始烧录设备号> 开始等待设备插入并烧录。";
+	}
+	else
+	{
+		//from false to true, this status is true
+		CWnd *pWnd;
+		
+		audo_detect_device_to_burn_sn = TRUE;
+
+		pWnd = GetDlgItem(IDC_START_BURN);
+		pWnd->SetWindowText(_T("停止烧录设备号"));
+		m_output_msg += "\r\n等待设备插入并进入到Recovery模式....";
+	}
+#endif
+
 	return;
 
 	
@@ -396,6 +427,8 @@ BOOL CFactoryToolsDlg::StartBurn()
 	//draw_runing = TRUE;
 	//m_output_msg = "";
 	get_sn = "";
+
+	TRACE("\nEntering StartBurn ...");
 
 	m_adbstat.set_serial_number_empty();
 	get_info = m_confutil.check_machine_stat("recovery");
@@ -471,7 +504,7 @@ void CFactoryToolsDlg::OnBnClickedRunCmd()
 bool CFactoryToolsDlg::Loop()
 {
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_INFO);
-	TRACE(_T(" Debug by JamesL "));
+	TRACE(_T(" Debug by JamesL \n"));
 #if 1
 	while (TRUE)
 	{
@@ -567,6 +600,7 @@ void CFactoryToolsDlg::OnBnClickedPlayMusic()
 	CString check_stat;
 	CString check_boot;
 
+	TRACE("\nEntering OnBnClickedPlayMusic ...");
 	si.cb = sizeof(STARTUPINFO);
 	GetStartupInfo(&si);
 	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
@@ -612,6 +646,8 @@ void CFactoryToolsDlg::OnBnClickedRebootToRecovery()
 	// TODO: 在此添加控件通知处理程序代码
 	CString check_stat;
 	CString check_boot;
+
+	TRACE("\nEntering OnBnClickedRebootToRecovery ...");
 	check_stat = m_confutil.check_machine_stat(_T("devices"));
 	if (check_stat.Find("device", 0) < 0)
 	{
@@ -629,6 +665,8 @@ void CFactoryToolsDlg::OnBnClickedButton1()
 {
 	CString check_stat;
 	CString check_boot;
+
+	TRACE("\nEntering OnBnClickedButton1 ...");
 	check_stat = m_confutil.check_machine_stat(_T("recovery"));
 	if (check_stat.Find("recovery", 0) < 0)
 	{
@@ -646,6 +684,8 @@ void CFactoryToolsDlg::OnBnClickedClearTest()
 {
 	CString check_stat;
 	CString check_boot;
+
+	TRACE("\nEntering OnBnClickedClearTest ...");
 	check_stat = m_confutil.check_machine_stat(_T("devices"));
 	if (check_stat.Find("device", 0) < 0)
 	{
@@ -682,6 +722,12 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 	CString get_burn_stat;
 	AdbStat dlgadbstat;
 
+	if (!audo_detect_device_to_burn_sn)
+	{
+		return;
+	}
+
+
 	switch (nIDEvent)
 	{
 	case 1:
@@ -693,6 +739,7 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 			dlgadbstat.DoModal();
 			get_sn = dlgadbstat.get_serial_number();
 
+			m_output_msg = "";
 			if (get_sn.IsEmpty())
 			{
 				m_output_msg += "\r\n没有输入设备号，停止烧录！";
@@ -701,7 +748,6 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 			m_output_msg += "\r\n输入的设备号为：	";
 			m_output_msg += get_sn;
 
-			TRACE("\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 			get_burn_stat = m_confutil.start_burn_local_config_to_machine(get_sn);
 			m_output_msg += "\r\n烧录状态：";
 			m_output_msg += get_burn_stat;				
@@ -718,6 +764,12 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 LRESULT CFactoryToolsDlg::OnMyDeviceChange(WPARAM wParam, LPARAM lParam)
 {
 	CString szTmp;
+
+	if (!audo_detect_device_to_burn_sn)
+	{
+		return 0;
+	}
+
 
 	if (DBT_DEVICEARRIVAL == wParam || DBT_DEVICEREMOVECOMPLETE == wParam)
 	{

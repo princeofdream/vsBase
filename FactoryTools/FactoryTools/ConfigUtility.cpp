@@ -115,6 +115,7 @@ CString ConfigUtility::check_machine_stat(CString get_mode)
 	CString get_stat;
 	CString m_ret;
 
+	TRACE("\nEntering check_machine_stat!");
 	for (int i0 = 0; i0 <= 3; i0++)
 	{
 		if (get_mode.Compare(_T("recovery")) == 0)
