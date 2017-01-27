@@ -11,7 +11,7 @@
 #include <WinUser.h>
 #include <Windows.h>
 
-#include "PThread_vsBase.h"
+#include <PThread_vsBase.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog

@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "include\PThread_vsBase.h"
-#include "include/grabScreen.h"
+#include <PThread_vsBase.h>
+#include <grabScreen.h>
 
 
 PThread_vsBase::PThread_vsBase()
@@ -62,7 +62,7 @@ UINT PThread_vsBase::Start_PThread(long* pParam)
 
 	if (pThread)
 	{
-		printf("Start PThread Sucess!");
+		printf("Start PThread Sucess!\n");
 		//pThread->m_bAutoDelete = TRUE;     //当线程结束是自动清除线程对象,默认是TRUE
 		//WaitForSingleObject(pThread->m_hThread, INFINITE); //等待线程结束
 														   //AfxMessageBox(strArg);

@@ -117,7 +117,7 @@
       <ObjectFileName>.\Debug\</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>F:\Work_Space\Develop\FloatWnd\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;src/include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PreLinkEvent>
       <Command>copyright.bat</Command>
@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\node_js.cpp" />
     <ClCompile Include="src\CapScreenAndAudio.cpp" />
     <ClCompile Include="src\Ffmpeg_Encoder.cpp" />
     <ClCompile Include="src\FloatWnd.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="include\libavfilter\buffersink.h" />
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
+    <ClInclude Include="src\include\node_js.h" />
     <ClInclude Include="src\include\CapScreenAndAudio.h" />
     <ClInclude Include="src\include\Ffmpeg_Encoder.h" />
     <ClInclude Include="src\include\FloatWnd.h" />

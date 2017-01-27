@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "include/st_debug.h"
+#include <st_debug.h>
 
 st_debug::st_debug()
 {

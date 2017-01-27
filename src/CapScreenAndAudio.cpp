@@ -5,7 +5,7 @@
  */
 
 #include "stdafx.h"
-#include "include/CapScreenAndAudio.h"
+#include <CapScreenAndAudio.h>
 
 #ifdef	__cplusplus
 extern "C"
