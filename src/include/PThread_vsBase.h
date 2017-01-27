@@ -1,7 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include "ProcessManager.h"
-#include "../CapScreenAndAudio.h"
+#include "CapScreenAndAudio.h"
 
 UINT __cdecl ThreadProc(LPVOID pParam);
 
