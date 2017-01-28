@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include <grabScreen.h>
 
+#include <basedef.h>
+
+#ifdef ENABLE_FFMPEG_AND_RECORD
 
 #ifdef	__cplusplus
 extern "C"
@@ -322,3 +325,4 @@ int Start_SDL_Rec(int argc, char* argv[])
 
 #endif
 
+#endif

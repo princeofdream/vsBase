@@ -7,6 +7,10 @@
 #include "stdafx.h"
 #include <CapScreenAndAudio.h>
 
+#include <basedef.h>
+
+#ifdef ENABLE_FFMPEG_AND_RECORD
+
 #ifdef	__cplusplus
 extern "C"
 {
@@ -621,3 +625,5 @@ int Start_Rec(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+
+#endif
