@@ -43,8 +43,10 @@ BEGIN_MESSAGE_MAP(CFloatWnd, CDialog)
 	ON_WM_NCLBUTTONDBLCLK()
 	//}}AFX_MSG_MAP
 	ON_STN_DBLCLK(IDC_LOGO, &CFloatWnd::OnStnDblclickLogo)
-	//ON_COMMAND(WM_MYMESSAGE, OnHandleMessage)
+
 	ON_MESSAGE(WM_MYMESSAGE, OnHandleMessage)
+	ON_MESSAGE(WM_MYMESSAGE_ONE, OnHandleMessageOne)
+	ON_MESSAGE(WM_MYMESSAGE_TWO, OnHandleMessageTwo)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -165,14 +167,7 @@ void CFloatWnd::OnUpdateTransparent(int iTransparent)
 void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point) 
 {
 	CBitmap CBmp;
-	if (rec_flag == false)
-	{
-		rec_flag = true;
-		CBmp.LoadMappedBitmap(IDB_BITMAP2, 0, 0, 0);
-		m_Logo.SetBitmap(HBITMAP(CBmp));
-	
-	
-
+#if 0
 		// TODO: Add your message handler code here and/or call default	
 		//CWnd *pParent = GetParent();
 		//ASSERT(pParent);
@@ -181,23 +176,30 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 		//	pParent->ShowWindow(SW_SHOW);
 
 		//CreateThread(NULL, 0, CheckRecStatThread, m_hWnd, 0, NULL);
-		printf("--James--[%s:%d]---Create thread success\n", __FILE__, __LINE__);
-#if 1
-		mpt.Start_PThread(NULL);
-#endif
 		//pParent->SetForegroundWindow();
-		printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
+		//printf("Enter double click issue!---[%s:%d]---\n", __FILE__, __LINE__);
 		//CDialog::OnNcLButtonDblClk(nFlags, point);
+#endif
+
+	if (rec_flag == false)
+	{
+#ifdef ENABLE_FLOAT_WM_LOGO_CHANGE
+		rec_flag = true;
+		CBmp.LoadMappedBitmap(IDB_BITMAP2, 0, 0, 0);
+		m_Logo.SetBitmap(HBITMAP(CBmp));
+#endif
+		printf("=================== [%s:%d] Get Double Start ================\n",__FILE__,__LINE__);
+		PostMessage(WM_MYMESSAGE_ONE, 0, 0);
 	}
 	else
 	{
-		printf("--James--[%s:%d]---\n", __FILE__, __LINE__);
-#if 1
-		PostMessage(WM_MYMESSAGE, 0, 0);
+#if ENABLE_FLOAT_WM_LOGO_CHANGE
 		rec_flag = false;
 		CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
 #endif
+		printf("=================== [%s:%d] Get Double Stop ================\n", __FILE__, __LINE__);
+		PostMessage(WM_MYMESSAGE_TWO, 0, 0);
 	}
 }
 
@@ -239,7 +241,20 @@ DWORD WINAPI CheckRecStatThread(LPVOID lpParam)
 LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam)
 {
 	printf("--James--[%s:%d]---Recive Message!\n", __FILE__, __LINE__);
-	SetRecStat(NULL);
+	return 0;
+}
+
+LRESULT CFloatWnd::OnHandleMessageOne(WPARAM wParma, LPARAM lParam)
+{
+	printf("--James--[%s:%d]---Recive Message!\n", __FILE__, __LINE__);
+	mpt.Start_PThread(NULL);
+	return 0;
+}
+
+LRESULT CFloatWnd::OnHandleMessageTwo(WPARAM wParma, LPARAM lParam)
+{
+	printf("--James--[%s:%d]---Recive Message!\n", __FILE__, __LINE__);
+	mpt.Check_Pthread(NULL);
 	return 0;
 }
 

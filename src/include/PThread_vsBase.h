@@ -2,6 +2,7 @@
 #include "afxwin.h"
 #include <ProcessManager.h>
 #include <CapScreenAndAudio.h>
+#include <node_js.h>
 
 UINT __cdecl ThreadProc(LPVOID pParam);
 
@@ -14,6 +15,7 @@ public:
 
 public:
 	UINT Start_PThread(long* pParam);
+	UINT Check_Pthread(long* pParam);
 
 };
 

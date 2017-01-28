@@ -3,6 +3,8 @@
 #include <grabScreen.h>
 
 
+node_js m_js;
+
 PThread_vsBase::PThread_vsBase()
 {
 }
@@ -30,15 +32,9 @@ UINT __cdecl ThreadProc(LPVOID pParam)
 		Sleep(500);
 	}
 #else
-	//ProcessManager mproc;
-	//mproc.Start_New_Process("ping", "127.0.0.1", "-n 10", NULL);
-	printf("=================== Start Rec ================\n");
-#if 0
-	Start_Rec(0, NULL);
-#else
-	Start_SDL_Rec(0, NULL);
-#endif
-	printf("=================== Stop Rec ================\n");
+	printf("=================== [%s:%d] Start PThread ================\n",__FILE__,__LINE__);
+	m_js.start_nodejs_proc(NULL);
+	printf("=================== [%s:%d] Stop PThread ================\n", __FILE__, __LINE__);
 #endif
 	AfxEndThread(ret,TRUE/*是否删除现成所占用的内存*/ ); //提前退出线程函数
 	return 0;
@@ -68,6 +64,14 @@ UINT PThread_vsBase::Start_PThread(long* pParam)
 														   //AfxMessageBox(strArg);
 	}
 #endif
+	return 0;
+}
+
+
+UINT PThread_vsBase::Check_Pthread(long* pParam)
+{
+	printf("=================== [%s:%d] Check PThread ================\n", __FILE__, __LINE__);
+	m_js.check_nodejs_proc(NULL);
 	return 0;
 }
 

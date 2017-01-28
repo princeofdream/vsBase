@@ -11,12 +11,16 @@
 #include <WinUser.h>
 #include <Windows.h>
 
+#include <basedef.h>
+
 #include <PThread_vsBase.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
 
-#define WM_MYMESSAGE (WM_USER+100)
+#define WM_MYMESSAGE (WM_USER + 100)
+#define WM_MYMESSAGE_ONE (WM_USER + 100 + 1)
+#define WM_MYMESSAGE_TWO (WM_USER + 100 + 2)
 
 DWORD WINAPI CheckRecStatThread(LPVOID lpParam);
 
@@ -59,6 +63,8 @@ protected:
 public:
 	afx_msg void OnStnDblclickLogo();
 	LRESULT CFloatWnd::OnHandleMessage(WPARAM wParma, LPARAM lParam);
+	LRESULT CFloatWnd::OnHandleMessageOne(WPARAM wParma, LPARAM lParam);
+	LRESULT CFloatWnd::OnHandleMessageTwo(WPARAM wParma, LPARAM lParam);
 
 protected:
 	PThread_vsBase mpt;
