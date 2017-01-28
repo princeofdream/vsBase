@@ -24,7 +24,7 @@ function change_file_name()
 	# echo "#!/bin/sh" > tmp.sh
 	find -name "*vsBase*" >> tmp.sh
 	sed "p; s/vsBase/$PROJECT_NAME/" tmp.sh | sed "N; s/\n/ /" > run.sh
-	sed -i 's/^/MV\ &/g' run.sh
+	sed -i 's/^/git\ mv\ &/g' run.sh
 	chmod a+x run.sh
 	echo "======= END ======="
 }
