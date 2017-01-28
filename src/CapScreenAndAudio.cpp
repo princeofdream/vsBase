@@ -28,9 +28,9 @@ extern "C"
 #pragma comment(lib, "avdevice.lib")
 #pragma comment(lib, "avfilter.lib")
 
-//#pragma comment(lib, "avfilter.lib")
-//#pragma comment(lib, "postproc.lib")
-//#pragma comment(lib, "swresample.lib")
+#pragma comment(lib, "avfilter.lib")
+#pragma comment(lib, "postproc.lib")
+#pragma comment(lib, "swresample.lib")
 #pragma comment(lib, "swscale.lib")
 #ifdef __cplusplus
 };
