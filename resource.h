@@ -17,6 +17,14 @@
 #define IDC_STOP_CMD                    1005
 #define IDC_BUTTON3                     1006
 #define IDC_RUN_REC                     1006
+#define IDC_IMGPROC                     1007
+#define IDC_REFRASH                     1008
+#define IDC_MOVE_LEFT                   1009
+#define IDC_MOVE_RIGHT                  1010
+#define IDC_BUTTON6                     1011
+#define IDC_NULL                        1011
+#define IDC_STATIC_FLOAT_WM             1012
+#define IDC_STATIC_FLOAT_WM_INFO        1012
 #define ID_SHOW                         32771
 #define ID_EXIT                         32772
 #define ID_ADD                          32773
@@ -26,9 +34,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
