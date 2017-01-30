@@ -20,13 +20,20 @@
 #define IDC_IMGPROC                     1007
 #define IDC_REFRASH                     1008
 #define IDC_MOVE_LEFT                   1009
+#define IDC_REVERT                      1009
 #define IDC_MOVE_RIGHT                  1010
+#define IDC_BROWSER_PHOTO_PATH          1010
 #define IDC_BUTTON6                     1011
 #define IDC_NULL                        1011
+#define IDC_LOAD_PHOTOS                 1011
 #define IDC_STATIC_FLOAT_WM             1012
 #define IDC_STATIC_FLOAT_WM_INFO        1012
 #define IDC_LOAD_PIC                    1014
 #define IDC_PIC_CTRL                    1014
+#define IDC_LIST1                       1016
+#define IDC_EDIT1                       1017
+#define IDC_STATIC_IMG_PATH             1018
+#define IDC_CUSTOM1                     1019
 #define ID_SHOW                         32771
 #define ID_EXIT                         32772
 #define ID_ADD                          32773
@@ -38,7 +45,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
