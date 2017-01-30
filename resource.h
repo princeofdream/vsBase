@@ -25,6 +25,8 @@
 #define IDC_NULL                        1011
 #define IDC_STATIC_FLOAT_WM             1012
 #define IDC_STATIC_FLOAT_WM_INFO        1012
+#define IDC_LOAD_PIC                    1014
+#define IDC_PIC_CTRL                    1014
 #define ID_SHOW                         32771
 #define ID_EXIT                         32772
 #define ID_ADD                          32773
@@ -36,7 +38,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1014
+#define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

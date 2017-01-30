@@ -11,9 +11,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CMainDlg dialog
 
-#include "src/include/FloatWnd.h"
-#include "src/include/PThread_vsBase.h"
-#include "src/include/ProcessManager.h"
+#include <FloatWnd.h>
+#include <PThread_vsBase.h>
+#include <ProcessManager.h>
+#include <ImgProc.h>
 
 //extern UINT __cdecl AfxThreadProc(LPVOID pParam);
 
@@ -59,6 +60,8 @@ public:
 	afx_msg void OnBnClickedStartCmd();
 	afx_msg void OnBnClickedStopCmd();
 	afx_msg void OnBnClickedRunRec();
+	afx_msg void OnBnClickedImgproc();
+	afx_msg void OnBnClickedRefrash();
 };
 
 //{{AFX_INSERT_LOCATION}}

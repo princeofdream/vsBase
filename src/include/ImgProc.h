@@ -2,8 +2,12 @@
 
 
 #include <basedef.h>
+#include <resource.h>
+#include <vsBase.h>
+#include <FloatWnd.h>
+#include <vsBaseDlg.h>
 
-class ImgProc
+class ImgProc : public CDialog
 {
 public:
 	ImgProc();

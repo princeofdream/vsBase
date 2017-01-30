@@ -102,6 +102,8 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_BN_CLICKED(IDC_START_CMD, &CMainDlg::OnBnClickedStartCmd)
 	ON_BN_CLICKED(IDC_STOP_CMD, &CMainDlg::OnBnClickedStopCmd)
 	ON_BN_CLICKED(IDC_RUN_REC, &CMainDlg::OnBnClickedRunRec)
+	ON_BN_CLICKED(IDC_IMGPROC, &CMainDlg::OnBnClickedImgproc)
+	ON_BN_CLICKED(IDC_REFRASH, &CMainDlg::OnBnClickedRefrash)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -290,3 +292,29 @@ void CMainDlg::OnBnClickedRunRec()
 }
 
 
+
+
+void CMainDlg::OnBnClickedImgproc()
+{
+#if 1
+	//ImgProc m_imgproc;
+	//m_imgproc.load_img_proc(NULL);
+	CStatic* pWnd = (CStatic*)GetDlgItem(IDC_PIC_CTRL); // 得到 Picture Control 句柄
+	pWnd->ModifyStyle(0, SS_BITMAP); // 修改它的属性为位图
+	pWnd->SetBitmap((HBITMAP)::LoadImage(NULL, _T("load_img.bmp"),
+		IMAGE_BITMAP,
+		720, 160,
+		LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE));
+#endif
+}
+
+
+void CMainDlg::OnBnClickedRefrash()
+{
+	CStatic* pWnd = (CStatic*)GetDlgItem(IDC_PIC_CTRL); // 得到 Picture Control 句柄
+	CImage image;
+	image.Load(_T("load_img.jpg"));
+	HBITMAP hBmp = image.Detach();
+	//pWnd->SetBitmap(hBmp);
+	//pWnd->SetWindowPos(NULL, 0, 0, 720, 160, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
+}
