@@ -2,8 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "vsBase.h"
-#include "vsBaseDlg.h"
+#include <vsBase.h>
+#include <vsBaseDlg.h>
+#include <PathBrowser.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -89,6 +90,9 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMainDlg)
 	DDX_Control(pDX, IDC_SLIDER1, m_Slider);
+	//DDX_Control(pDX, IDC_LIST_THUMB, m_ListThumbnail);
+	//DDX_Control(pDX, IDC_IMAGE_RECT, m_ImageRect);
+	DDX_Text(pDX, IDC_PATH_INFO, m_strImageDir);
 	//}}AFX_DATA_MAP
 }
 
@@ -104,6 +108,7 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_BN_CLICKED(IDC_RUN_REC, &CMainDlg::OnBnClickedRunRec)
 	ON_BN_CLICKED(IDC_IMGPROC, &CMainDlg::OnBnClickedImgproc)
 	ON_BN_CLICKED(IDC_REFRASH, &CMainDlg::OnBnClickedRefrash)
+	ON_BN_CLICKED(IDC_BROWSER_PHOTO_PATH, &CMainDlg::OnBnClickedBrowserPhotoPath)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -318,3 +323,58 @@ void CMainDlg::OnBnClickedRefrash()
 	//pWnd->SetBitmap(hBmp);
 	//pWnd->SetWindowPos(NULL, 0, 0, 720, 160, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOZORDER);
 }
+
+
+void CMainDlg::OnBnClickedBrowserPhotoPath()
+{
+	// TODO: Add your control notification handler code here
+	CPathDialog  dlg(TEXT("Folder Selection"),
+		TEXT("Select Image Directory to Browse"),
+		m_strImageDir,
+		this);
+
+	// show path dialog
+	if (dlg.DoModal() == IDOK)
+	{
+		CString strPath = dlg.GetPathName();
+		if (strPath != m_strImageDir)
+		{
+			m_strImageDir = strPath;
+			UpdateData(FALSE);
+		}
+		printf("Get path: %s",strPath);
+	}
+}
+
+#if 0
+void  CMainDlg::DrawSelectedImage()
+{
+#if 0
+	CString		strPath;
+	Rect		DesRect;
+	RECT		clRect;
+
+	// read the image file
+	if (m_strImageDir.Right(1) == TEXT("\\"))
+		strPath.Format(TEXT("%s%s"), m_strImageDir, m_VectorImageNames[m_nSelectedItem]);
+	else
+		strPath.Format(TEXT("%s\\%s"), m_strImageDir, m_VectorImageNames[m_nSelectedItem]);
+
+	USES_CONVERSION;
+	Image img(A2W(strPath));
+
+	// get destination rectangle
+	m_ImageRect.GetClientRect(&clRect);
+	DesRect.X = clRect.left;
+	DesRect.Y = clRect.top;
+	DesRect.Width = clRect.right - clRect.left;
+	DesRect.Height = clRect.bottom - clRect.top;
+
+	// draw the image
+	Graphics gc(m_ImageRect.GetDC()->GetSafeHdc());
+	gc.DrawImage(&img, DesRect);
+#endif
+}
+#endif
+
+

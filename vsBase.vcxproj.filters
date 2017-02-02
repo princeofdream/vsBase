@@ -57,6 +57,12 @@
     <ClCompile Include="src\ImgProc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PathBrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageArea.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="vsBase.rc">
@@ -106,9 +112,6 @@
     <ClInclude Include="include\libavcodec\qsv.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
@@ -131,12 +134,6 @@
       <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\libavcodec\vorbis_parser.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="vsBase.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="vsBaseDlg.h">
       <Filter>Header Files\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\libavcodec\xvmc.h">
@@ -173,6 +170,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\include\ImgProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vsBaseDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vsBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\PathBrowser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\ImageArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

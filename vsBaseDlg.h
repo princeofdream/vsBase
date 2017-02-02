@@ -15,6 +15,7 @@
 #include <PThread_vsBase.h>
 #include <ProcessManager.h>
 #include <ImgProc.h>
+#include <ImageArea.h>
 
 //extern UINT __cdecl AfxThreadProc(LPVOID pParam);
 
@@ -62,6 +63,14 @@ public:
 	afx_msg void OnBnClickedRunRec();
 	afx_msg void OnBnClickedImgproc();
 	afx_msg void OnBnClickedRefrash();
+	afx_msg void OnBnClickedBrowserPhotoPath();
+
+public:
+	CString	m_strImageDir;
+	//CListCtrl	m_ListThumbnail;
+	//CImageArea	m_ImageRect;
+	//void  DrawSelectedImage();
+
 };
 
 //{{AFX_INSERT_LOCATION}}

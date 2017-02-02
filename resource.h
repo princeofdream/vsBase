@@ -11,6 +11,7 @@
 #define IDB_BITMAP1                     129
 #define IDR_MENU1                       130
 #define IDB_BITMAP2                     133
+#define IDD_PATH_BROWSER                135
 #define IDC_LOGO                        1002
 #define IDC_SLIDER1                     1003
 #define IDC_START_CMD                   1004
@@ -31,9 +32,11 @@
 #define IDC_LOAD_PIC                    1014
 #define IDC_PIC_CTRL                    1014
 #define IDC_LIST1                       1016
-#define IDC_EDIT1                       1017
+#define IDC_LIST_THUMB                  1016
+#define IDC_PATH_INFO                   1017
 #define IDC_STATIC_IMG_PATH             1018
-#define IDC_CUSTOM1                     1019
+#define IDC_DIRTREE                     1022
+#define IDC_IMAGE_RECT                  1023
 #define ID_SHOW                         32771
 #define ID_EXIT                         32772
 #define ID_ADD                          32773
@@ -43,9 +46,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

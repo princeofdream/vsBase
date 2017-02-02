@@ -188,11 +188,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ImageArea.cpp" />
     <ClCompile Include="src\ImgProc.cpp" />
     <ClCompile Include="src\node_js.cpp" />
     <ClCompile Include="src\CapScreenAndAudio.cpp" />
     <ClCompile Include="src\Ffmpeg_Encoder.cpp" />
     <ClCompile Include="src\FloatWnd.cpp" />
+    <ClCompile Include="src\PathBrowser.cpp" />
     <ClCompile Include="src\ProcessManager.cpp" />
     <ClCompile Include="src\PThread_vsBase.cpp" />
     <ClCompile Include="src\StdAfx.cpp" />
@@ -235,12 +237,14 @@
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
     <ClInclude Include="src\include\basedef.h" />
+    <ClInclude Include="src\include\ImageArea.h" />
     <ClInclude Include="src\include\ImgProc.h" />
     <ClInclude Include="src\include\node_js.h" />
     <ClInclude Include="src\include\CapScreenAndAudio.h" />
     <ClInclude Include="src\include\Ffmpeg_Encoder.h" />
     <ClInclude Include="src\include\FloatWnd.h" />
     <ClInclude Include="src\include\grabScreen.h" />
+    <ClInclude Include="src\include\PathBrowser.h" />
     <ClInclude Include="src\include\ProcessManager.h" />
     <ClInclude Include="src\include\PThread_vsBase.h" />
     <ClInclude Include="src\include\st_debug.h" />

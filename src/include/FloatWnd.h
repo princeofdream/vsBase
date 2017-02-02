@@ -14,6 +14,7 @@
 #include <basedef.h>
 
 #include <PThread_vsBase.h>
+#include <resource.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // CFloatWnd dialog
