@@ -16,8 +16,16 @@
 #include <ProcessManager.h>
 #include <ImgProc.h>
 #include <ImageArea.h>
+#include <vector>
+
+
 
 //extern UINT __cdecl AfxThreadProc(LPVOID pParam);
+
+#define	THUMBNAIL_WIDTH		32
+#define	THUMBNAIL_HEIGHT	32
+
+
 
 class CMainDlg : public CDialog
 {
@@ -66,11 +74,21 @@ public:
 	afx_msg void OnBnClickedBrowserPhotoPath();
 
 public:
+	ULONG_PTR	m_gdiplusToken;
 	CString	m_strImageDir;
-	//CListCtrl	m_ListThumbnail;
-	//CImageArea	m_ImageRect;
-	//void  DrawSelectedImage();
+	CListCtrl	m_ListThumbnail;
+	CImageArea	m_ImageRect;
 
+	CImageList				m_ImageListThumb;		// image list holding the thumbnails
+	std::vector<CString>	m_VectorImageNames;		// vector holding the image names
+	int						m_nSelectedItem;
+
+public:
+	void  DrawSelectedImage();
+	BOOL  GetImageFileNames();
+	void  DrawThumbnails();
+
+	afx_msg void OnBnClickedLoadPhotos();
 };
 
 //{{AFX_INSERT_LOCATION}}

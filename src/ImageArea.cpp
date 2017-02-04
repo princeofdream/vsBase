@@ -36,7 +36,6 @@ END_MESSAGE_MAP()
 
 void CImageArea::OnPaint()
 {
-#if 0
 	CPaintDC dc(this); // device context for painting
 
 					   // TODO: Add your message handler code here
@@ -45,5 +44,4 @@ void CImageArea::OnPaint()
 		pWnd->DrawSelectedImage();
 
 	// Do not call CStatic::OnPaint() for painting messages
-#endif
 }

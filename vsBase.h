@@ -43,7 +43,10 @@ public:
 		// NOTE - the ClassWizard will add and remove member functions here.
 		//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
+public:
+
 	DECLARE_MESSAGE_MAP()
+	virtual int ExitInstance();
 };
 
 

@@ -10,4 +10,10 @@
 #include <string.h>
 #include <math.h>
 
+#include <gdiplus.h>
+#include <gdiplusinit.h>
+#include <gdiplusbase.h>
+
+using namespace Gdiplus;
+
 
