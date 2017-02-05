@@ -114,6 +114,8 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_BN_CLICKED(IDC_REFRASH, &CMainDlg::OnBnClickedRefrash)
 	ON_BN_CLICKED(IDC_BROWSER_PHOTO_PATH, &CMainDlg::OnBnClickedBrowserPhotoPath)
 	ON_BN_CLICKED(IDC_LOAD_PHOTOS, &CMainDlg::OnBnClickedLoadPhotos)
+	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST_THUMB, &CMainDlg::OnLvnKeydownListThumb)
+	ON_NOTIFY(NM_CLICK, IDC_LIST_THUMB, &CMainDlg::OnNMClickListThumb)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -163,8 +165,6 @@ BOOL CMainDlg::OnInitDialog()
 	// initialize GDI+
 	GdiplusStartupInput gdiplusStartupInput;
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
-	printf("-----------------------------------------------\n");
-	TRACE("++++++++++++++++++++++++++++++++++++++++++++\n\n");
 #endif
 
 #if 1 //for thumbnail
@@ -649,6 +649,93 @@ void  CMainDlg::DrawThumbnails()
 
 	// let's show the new thumbnails
 	m_ListThumbnail.SetRedraw();
+}
+
+
+
+
+
+
+void CMainDlg::OnLvnKeydownListThumb(NMHDR *pNMHDR, LRESULT *pResult)
+{
+#if 0
+	LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+#else
+	LV_KEYDOWN* pLVKeyDow = (LV_KEYDOWN*)pNMHDR;
+	// TODO: Add your control notification handler code here
+
+	if (pLVKeyDow->wVKey == VK_LEFT || pLVKeyDow->wVKey == VK_RIGHT)
+	{
+		// get total number of items in the list
+		int nTotal = m_ListThumbnail.GetItemCount();
+
+		// rule out the situation of an empty list
+		if (nTotal == 0)
+		{
+			*pResult = 1; // current record stays selected
+			return;
+		}
+
+		// reset selected item index
+		int  nNewItem = -1;
+
+		// set the selection
+		if (pLVKeyDow->wVKey == VK_LEFT)	// left arrow
+		{
+			if (m_nSelectedItem > 0)
+				nNewItem = m_nSelectedItem - 1;
+		}
+		else	// right arrow
+		{
+			if (m_nSelectedItem < nTotal - 1)
+				nNewItem = m_nSelectedItem + 1;
+		}
+
+		// update the selection
+		if (nNewItem != -1)
+		{
+			// update the selected item index
+			m_nSelectedItem = nNewItem;
+
+			// draw the selected image
+			DrawSelectedImage();
+		}
+	}
+
+	// high-light the selected item
+	*pResult = 0;
+#endif
+}
+
+
+void CMainDlg::OnNMClickListThumb(NMHDR *pNMHDR, LRESULT *pResult)
+{
+#if 0
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+#else
+	// retrieve message info.
+	LPNMITEMACTIVATE pItemAct = (LPNMITEMACTIVATE)pNMHDR;
+
+	// determine which item receives the click
+	LVHITTESTINFO  hitTest;
+	ZeroMemory(&hitTest, sizeof(LVHITTESTINFO));
+	hitTest.pt = pItemAct->ptAction;
+	m_ListThumbnail.SendMessage(LVM_SUBITEMHITTEST, 0, (LPARAM)&hitTest);
+
+	// draw the selected image
+	if (hitTest.iItem != m_nSelectedItem && hitTest.iItem >= 0)
+	{
+		m_nSelectedItem = hitTest.iItem;
+		DrawSelectedImage();
+	}
+
+	// select the item clicked
+	*pResult = 0;
+#endif
 }
 
 

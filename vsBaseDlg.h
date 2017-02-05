@@ -89,6 +89,8 @@ public:
 	void  DrawThumbnails();
 
 	afx_msg void OnBnClickedLoadPhotos();
+	afx_msg void OnLvnKeydownListThumb(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickListThumb(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 //{{AFX_INSERT_LOCATION}}
