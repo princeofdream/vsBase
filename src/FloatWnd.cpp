@@ -185,7 +185,7 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 	{
 #ifdef ENABLE_FLOAT_WM_LOGO_CHANGE
 		rec_flag = true;
-		CBmp.LoadMappedBitmap(IDB_BITMAP2, 0, 0, 0);
+		CBmp.LoadBitmap(IDB_BITMAP2);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
 #endif
 		printf("=================== [%s:%d] Get Double Start ================\n",__FILE__,__LINE__);
@@ -195,7 +195,7 @@ void CFloatWnd::OnNcLButtonDblClk(UINT nFlags, CPoint point)
 	{
 #if ENABLE_FLOAT_WM_LOGO_CHANGE
 		rec_flag = false;
-		CBmp.LoadMappedBitmap(IDB_BITMAP1, 0, 0, 0);
+		CBmp.LoadBitmap(IDB_BITMAP1);
 		m_Logo.SetBitmap(HBITMAP(CBmp));
 #endif
 		printf("=================== [%s:%d] Get Double Stop ================\n", __FILE__, __LINE__);
