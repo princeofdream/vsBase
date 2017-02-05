@@ -18,7 +18,7 @@ UINT node_js::start_nodejs_proc(long* argc)
 	char *param = "wait_for_single";
 
 	printf("=================== [%s:%d] Start JS ================\n", __FILE__, __LINE__);
-	//m_proc.Start_New_Process("node.exe", "node.js/hello.js", NULL, (long*)param);
+	m_proc.Start_New_Process("node.exe", "node.js/hello.js", NULL, (long*)param);
 	printf("=================== [%s:%d] End of JS ================\n",__FILE__,__LINE__);
 
 	m_stat++;

@@ -42,7 +42,9 @@ public:
 
 	int iTransparent;
 
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	CFloatWnd *pFloatWnd;
+#endif
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainDlg)

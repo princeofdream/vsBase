@@ -12,7 +12,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#ifdef ENABLE_CONFOLE_DEBUG_INFO
 st_debug m_debug;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -69,21 +71,27 @@ CMainDlg::CMainDlg(CWnd* pParent /*=NULL*/)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
+#ifdef ENABLE_CONFOLE_DEBUG_INFO
 	m_debug.init_debug_env();
+#endif
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	iTransparent = 255;
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	pFloatWnd = NULL;
+#endif
 	m_strImageDir = _T("");
 }
 
 CMainDlg::~CMainDlg()
 {
+#ifdef ENABLE_CONFOLE_DEBUG_INFO
 	bool flag = m_debug.get_console_flag();
 	if (flag)
 	{
 		m_debug.release_debug_env();
 	}
+#endif
 
 #ifdef ENABLE_GDI_PLUS_IMAGE_DRAWING
 	GdiplusShutdown(m_gdiplusToken);
@@ -152,11 +160,13 @@ BOOL CMainDlg::OnInitDialog()
 	
 	// TODO: Add extra initialization here
 
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	pFloatWnd = new CFloatWnd;
 	pFloatWnd->Create(IDD_FLOATWND,this);
 	pFloatWnd->ShowWindow(SW_SHOW);
 
 	pFloatWnd->OnUpdateTransparent(iTransparent);
+#endif
 
 	m_Slider.SetRangeMax(255,TRUE);
 	m_Slider.SetRangeMin(1,TRUE);
@@ -232,16 +242,23 @@ void CMainDlg::OnOK()
 {
 	// TODO: Add extra validation here
 
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	ShowWindow(SW_HIDE);
-	//CDialog::OnOK();
+#else
+	CDialog::OnOK();
+#endif
+	
 }
 
 void CMainDlg::OnCancel() 
 {
 	// TODO: Add extra cleanup here
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	ShowWindow(SW_HIDE);
-	
-	//CDialog::OnCancel();
+#else
+	CDialog::OnCancel();
+#endif
+
 }
 
 void CMainDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
@@ -282,7 +299,9 @@ void CMainDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	m_Slider.SetPos(iCurPos);
 
+#ifdef ENABLE_FLOAT_WINDOW_FEATURE
 	pFloatWnd->OnUpdateTransparent(iCurPos);
+#endif
 	
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
@@ -291,22 +310,26 @@ void CMainDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CMainDlg::OnBnClickedStartCmd()
 {
 	// TODO: 在此添加控件通知处理程序代码
+#ifdef ENABLE_CONFOLE_DEBUG_INFO
 	bool flag = m_debug.get_console_flag();
 	if (!flag)
 	{
 		m_debug.init_debug_env();
 	}
+#endif
 }
 
 
 void CMainDlg::OnBnClickedStopCmd()
 {
 	// TODO: 在此添加控件通知处理程序代码
+#ifdef ENABLE_CONFOLE_DEBUG_INFO
 	bool flag = m_debug.get_console_flag();
 	if (flag)
 	{
 		m_debug.release_debug_env();
 	}
+#endif
 }
 
 
@@ -315,7 +338,6 @@ void CMainDlg::OnBnClickedRunRec()
 	long pParam = NULL;
 	PThread_vsBase mpthread;
 	mpthread.Start_PThread(&pParam);
-	printf("============ END =============\n");
 }
 
 
