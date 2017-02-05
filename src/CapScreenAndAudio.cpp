@@ -7,8 +7,6 @@
 #include "stdafx.h"
 #include <CapScreenAndAudio.h>
 
-#include <basedef.h>
-
 #ifdef ENABLE_FFMPEG_AND_RECORD
 
 #ifdef	__cplusplus

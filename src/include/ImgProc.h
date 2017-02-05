@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <basedef.h>
+#include <def.h>
 #include <resource.h>
 #include <vsBase.h>
 #include <FloatWnd.h>

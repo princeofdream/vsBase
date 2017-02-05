@@ -1,5 +1,4 @@
-#include <basedef.h>
-
+#include <def.h>
 #include "tchar.h"
 #include <stdarg.h>
 

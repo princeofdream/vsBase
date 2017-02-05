@@ -85,7 +85,9 @@ CMainDlg::~CMainDlg()
 		m_debug.release_debug_env();
 	}
 
+#ifdef ENABLE_GDI_PLUS_IMAGE_DRAWING
 	GdiplusShutdown(m_gdiplusToken);
+#endif
 
 }
 
@@ -161,7 +163,7 @@ BOOL CMainDlg::OnInitDialog()
 	m_Slider.SetPageSize(10);
 	m_Slider.SetPos(255);
 	
-#if 1
+#ifdef ENABLE_GDI_PLUS_IMAGE_DRAWING
 	// initialize GDI+
 	GdiplusStartupInput gdiplusStartupInput;
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
@@ -603,7 +605,7 @@ void  CMainDlg::DrawThumbnails()
 		printf("==== [%s:%d] get path: %s ====\n", __FILE__, __LINE__, strPath);
 
 		USES_CONVERSION;
-#if 1	//Must start gdi first
+#ifdef ENABLE_GDI_PLUS_IMAGE_DRAWING
 		Bitmap img(A2W(strPath));
 		Bitmap* pThumbnail = static_cast<Bitmap*>(img.GetThumbnailImage(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, NULL, NULL));
 #else

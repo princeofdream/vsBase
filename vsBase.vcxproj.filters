@@ -166,9 +166,6 @@
     <ClInclude Include="src\include\node_js.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\basedef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\include\ImgProc.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -17,3 +17,9 @@
 using namespace Gdiplus;
 
 
+#define ENABLE_FLOAT_WM_LOGO_CHANGE 1
+//#define ENABLE_FFMPEG_AND_RECORD 1
+
+//#define ENABLE_GDI_PLUS_IMAGE_DRAWING 1
+
+

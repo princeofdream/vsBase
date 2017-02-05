@@ -236,7 +236,6 @@
     <ClInclude Include="include\libavfilter\buffersink.h" />
     <ClInclude Include="include\libavfilter\buffersrc.h" />
     <ClInclude Include="include\libavfilter\version.h" />
-    <ClInclude Include="src\include\basedef.h" />
     <ClInclude Include="src\include\ImageArea.h" />
     <ClInclude Include="src\include\ImgProc.h" />
     <ClInclude Include="src\include\node_js.h" />

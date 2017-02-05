@@ -11,7 +11,7 @@
 #include <WinUser.h>
 #include <Windows.h>
 
-#include <basedef.h>
+#include <def.h>
 
 #include <PThread_vsBase.h>
 #include <resource.h>

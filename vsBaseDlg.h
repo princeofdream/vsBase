@@ -74,7 +74,9 @@ public:
 	afx_msg void OnBnClickedBrowserPhotoPath();
 
 public:
+#ifdef ENABLE_GDI_PLUS_IMAGE_DRAWING
 	ULONG_PTR	m_gdiplusToken;
+#endif
 	CString	m_strImageDir;
 	CListCtrl	m_ListThumbnail;
 	CImageArea	m_ImageRect;

@@ -82,7 +82,5 @@ BOOL CMainApp::InitInstance()
 
 int CMainApp::ExitInstance()
 {
-	// release GDI+ resource
-
 	return CWinApp::ExitInstance();
 }

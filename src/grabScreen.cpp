@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include <grabScreen.h>
 
-#include <basedef.h>
-
 #ifdef ENABLE_FFMPEG_AND_RECORD
 
 #ifdef	__cplusplus
