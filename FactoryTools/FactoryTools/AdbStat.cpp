@@ -77,11 +77,15 @@ void AdbStat::OnChangeSerialNumber()
 	str_tmp.TrimRight();
 
 
-
-	if (str_tmp.GetLength() ==15)
+	if (str_tmp.GetLength() == 15)
 	{
+		this->GetDlgItem(IDOK)->EnableWindow(true);
 		m_serial_number = str_tmp;
 		OnOK();
+	}
+	else if (str_tmp.GetLength() <= 14)
+	{
+		this->GetDlgItem(IDOK)->EnableWindow(false);
 	}
 }
 
@@ -92,6 +96,7 @@ BOOL AdbStat::OnInitDialog()
 
 	this->GetDlgItem(IDC_SERIAL_NUMBER)->SetFocus();
 	((CEdit*)(GetDlgItem(IDC_SERIAL_NUMBER)))->SetSel(0, -1);
+	this->GetDlgItem(IDOK)->EnableWindow(false);
 
 	return FALSE;
 }

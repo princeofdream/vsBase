@@ -270,6 +270,8 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 	CString get_device_info;
 	CString check_stat;
 	CString check_boot;
+	CString m_ver;
+	CString m_fin_prt;
 #if 0
 	TRACE("James's Debug....");
 	m_adbstat.Create(IDD_ADBSTAT, GetDlgItem(IDC_CHECK_ADB));
@@ -301,6 +303,15 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 		else
 		{
 			m_output_msg += "Recovery模式：设备在Recovery模式！";
+
+			m_ver = m_ctrlcent.StartSingleCommand(_T("adb shell getprop ro.mediatek.version.release"));
+			m_fin_prt = m_ctrlcent.StartSingleCommand(_T("adb shell getprop ro.build.fingerprint"));
+
+			m_output_msg += "\r\n\r\n\r\n\r";
+			m_output_msg += "==========================================\r\n";
+			m_output_msg += "软件版本号：" + m_ver;
+			m_output_msg += "软件指纹：" + m_fin_prt;
+			m_output_msg += "==========================================";
 		}
 	}
 	else
@@ -312,13 +323,24 @@ void CFactoryToolsDlg::OnBnClickedCheckAdb()
 		if (check_boot.Find("1", 0) < 0)
 		{
 			m_output_msg += "Android 模式：正在开机！";
-			return;
 		}
 		else
 		{
 			m_output_msg += "Android 模式：开机完成！";
 		}
+
+		m_ver = m_ctrlcent.StartSingleCommand(_T("adb shell getprop ro.mediatek.version.release"));
+		m_fin_prt = m_ctrlcent.StartSingleCommand(_T("adb shell getprop ro.build.fingerprint"));
+
+		m_output_msg += "\r\n\r\n\r\n\r";
+		m_output_msg += "==========================================\r\n";
+		m_output_msg += "软件版本号：" + m_ver;
+		m_output_msg += "软件指纹：" + m_fin_prt;
+		m_output_msg += "==========================================";
 	}
+
+
+	return;
 	
 }
 
