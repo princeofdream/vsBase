@@ -771,7 +771,7 @@ void CFactoryToolsDlg::OnTimer(UINT_PTR nIDEvent)
 			m_output_msg += get_sn;
 
 			get_burn_stat = m_confutil.start_burn_local_config_to_machine(get_sn);
-			m_output_msg += "\r\nÉÕÂ¼×´Ì¬£º";
+			m_output_msg += "\r\nÅäÖÃÎÄ¼şÉÕÂ¼×´Ì¬£º";
 			m_output_msg += get_burn_stat;				
 		}
 		break;

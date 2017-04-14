@@ -46,11 +46,15 @@ CString ConfigUtility::start_burn_local_config_to_machine(CString m_sn)
 	m_ret = m_sn;
 	if (get_write_conf_stat.Compare(_T("OK")) == 0)
 	{
-		m_ret += "\r\n";
+		m_ret = "\r\n";
 		m_ret += get_write_conf_stat;
 		m_ret += "\r\n";
 		get_burned_data = check_burned_data(m_sn);
 		m_ret += get_burned_data;
+	}
+	else
+	{
+		m_ret = "配置文件写入出错！";
 	}
 
 	return m_ret;
@@ -586,6 +590,7 @@ CString ConfigUtility::write_config_files_to_machine()
 	char chPath[301];
 	TCHAR command[1024] = _T("adb");
 	TCHAR command_arg[1024] = _T("push FactoryTools.cpp /protect_s/IBoxConfig/");
+	CString check_file_stat;
 
 	STARTUPINFO si = { sizeof(si) };
 	PROCESS_INFORMATION pi;
@@ -597,11 +602,13 @@ CString ConfigUtility::write_config_files_to_machine()
 	
 	::GetCurrentDirectory(300, (LPTSTR)chPath);//得到当前目录
 
+	TRACE(chPath);
+
 	m_ctrlcent.StartSingleCommand("adb shell \"rm -rf /protect_f/IBoxConfig/ /protect_s/IBoxConfig/ \"");
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_s/IBoxConfig/\"");
 	m_ctrlcent.StartSingleCommand("adb shell \"mkdir -p /protect_f/IBoxConfig/\"");
 
-
+	TRACE("push cofig-------------------------");
 	CreateProcess(NULL, _T("adb push IBoxConfig\\CaptureConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 	CreateProcess(NULL, _T("adb push IBoxConfig\\FolderConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 	CreateProcess(NULL, _T("adb push IBoxConfig\\RTSPConfig.txt /protect_s/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
@@ -615,6 +622,12 @@ CString ConfigUtility::write_config_files_to_machine()
 	CreateProcess(NULL, _T("adb push IBoxConfig\\VideoRecordConfig.txt /protect_f/IBoxConfig/"), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
 	m_ctrlcent.StartSingleCommand("adb shell sync");
+
+	check_file_stat = m_ctrlcent.StartSingleCommand(_T("adb shell ls protect_s/IBoxConfig/"));
+
+	if (strlen(check_file_stat) <= 2)
+		return _T("Fail");
+
 	return _T("OK");
 }
 
